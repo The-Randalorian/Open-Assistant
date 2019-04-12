@@ -1,0 +1,14 @@
+[properties]
+name = Template
+version = 0.0.0
+service = Template
+exclusive = no
+
+[order]
+before = []
+after = [{"plugin":"$core", "priority":0}]
+
+[updates]
+remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
+localroot = _APPLES_/
+files = [["terminal.apm", "terminal.apm"], ["terminal/__init__.py", "terminal/__init__.py"]]

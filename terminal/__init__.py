@@ -90,7 +90,7 @@ INFO
 
 USAGE
     {0} [command]
-        command - displays information on that command.
+        command - Displays information on that command.
 
     {0} [flags]
         -h, -H - Shows this information.

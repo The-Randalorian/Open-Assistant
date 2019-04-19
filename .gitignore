@@ -112,3 +112,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# prevent personal user information created during testing from being uploaded by accident
+*.mem
+*.oam

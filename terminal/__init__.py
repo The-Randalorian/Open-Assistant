@@ -105,7 +105,7 @@ USAGE
                 if arguments[0] == "-h" or arguments[0] == "-H":
                     assist([helpCommand, "help"])
                 elif arguments[0] == "-L":
-                    print("list")
+                    printCommands(commands)
                 else:
                     print("Invalid flag. Type 'help help' for more info.")
                 return
@@ -123,6 +123,13 @@ USAGE
             print("could not find command.")
     else:
         print("command not specified. Type 'help help' for more info or 'help -L' for a list of commands.")
+
+def printCommands(coms, head=""):
+    for command in coms.keys():
+        if isinstance(coms[command], dict):
+            printCommands(coms[command], head + command + ".")
+        else:
+            print(head + command)
 
 def eStop(arguments):
     """

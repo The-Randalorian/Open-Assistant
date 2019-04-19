@@ -1,3 +1,7 @@
+import pythoncom
+
+pythoncom.CoInitialize()
+
 import threading, time
 from queue import Queue
 import pyttsx3
@@ -42,6 +46,7 @@ def closeThread():
 
 def threadScript():
     global voices, voiceNames
+    pythoncom.CoInitialize()
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
     for voice in voices:

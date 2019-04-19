@@ -1,4 +1,6 @@
 import threading, time
+import pyaudio
+import numpy
 
 services = {}
 plugin = {}

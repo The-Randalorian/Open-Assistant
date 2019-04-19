@@ -1,6 +1,6 @@
 [properties]
 name = englishActions
-version = 0.1.0
+version = 0.2.1
 service = actions
 exclusive = yes
 
@@ -11,4 +11,4 @@ after = [{"plugin":"$core", "priority":0}]
 [updates]
 remoteroot = https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/
 localroot = _APPLES_/
-files = [["englishActions.apm", "englishActions.apm"], ["englishActions/__init__.py", "englishActions/__init__.py"]]
+files = [["englishActions.apm", "englishActions.apm"], ["englishActions/__init__.py", "englishActions/__init__.py"], ["englishActions/vbf.py", "englishActions/vbf.py"]]

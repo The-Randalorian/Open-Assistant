@@ -1,2 +1,2 @@
 # Open Assistant
-Work in progress, currently no functionality.
+A work-in-progress open source python assistant, hopefully similar to alexa, siri, cortana, etc...

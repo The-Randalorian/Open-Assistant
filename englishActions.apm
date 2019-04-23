@@ -1,6 +1,6 @@
 [properties]
 name = englishActions
-version = 0.2.1
+version = 0.2.2
 service = actions
 exclusive = yes
 

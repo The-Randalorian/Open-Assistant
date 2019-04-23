@@ -1,6 +1,7 @@
 import englishActions as actions
 import pickle
 import time
+import datetime
 
 memformat = "0.2.0"
 
@@ -12,10 +13,10 @@ class Thing:
         self.attributes = a
 
     def __str__(self):
-        return str(self.attributes)
+        return str(self.getData()) + str(self.attributes)
 
     def __repr__(self):
-        return repr(self.attributes)
+        return repr(self.getData()) + repr(self.attributes)
 
     def setData(self, d="", t=None):
         if t == None:
@@ -29,9 +30,10 @@ class Thing:
     def getData(self):
         if self.dataType == "string":
             return self.dataValue
-        if self.dataType == "idea":
+        elif self.dataType == "idea":
             return None
-
+        elif self.dataType == "functional":
+            return self.dataValue()
     def get(self, key, value):
         return self.attributes.get(key, value)
 
@@ -52,7 +54,6 @@ class link:
         self.ref = None
 
     def __str__(self):
-        print(str(self.ref))
         return str(self.ref)
 
     def __repr__(self):
@@ -97,11 +98,28 @@ class link:
     def getRef(self):
         return self
 
+def data_getTime():
+    return str(datetime.datetime.now().strftime("%I:%M %p"))
+
 mem = {
     "green": Thing(w=False, d="green", t="string", a={
         }),
+    "red": Thing(w=False, d="green", t="string", a={
+        }),
+    "blue": Thing(w=False, d="green", t="string", a={
+        }),
+    "yellow": Thing(w=False, d="green", t="string", a={
+        }),
+    "orange": Thing(w=False, d="green", t="string", a={
+        }),
+    "purple": Thing(w=False, d="green", t="string", a={
+        }),
+    "pink": Thing(w=False, d="green", t="string", a={
+        }),
     "color": Thing(w=False, d=None, t="idea", a={
         "best": link("green"),
+        }),
+    "time": Thing(w=False, d=data_getTime, t="functional", a={
         }),
     "^USER": Thing(w=False, d=None, t="idea", a={ #I, me, mine
         }),
@@ -127,11 +145,13 @@ memHeads = {
         "hers":"^FMAL",
         },
     }
-memChilds = [
-    "acomp",
-    "attr",
-    "amod",
-    ]
+memChildsPath = {
+    "acomp": None,
+    "attr": None,
+    "amod":{
+        "advmod": None,
+        }
+    }
 
 def _close():
     global mem
@@ -172,19 +192,21 @@ def vb_be(root, subjects):
     if interrogative:
         for subject in subjects:
             for s in subject:
-                item = [s.text]
-                for head in memHeads.keys():
-                    for h in actions.getDependency(s, head):
-                        item.insert(0, memHeads[head].get(h.text, h.text))
-                for child in memChilds:
-                    for c in actions.getDependency(s, child):
-                        item.append(c.text)
-                path = mem
-                for part in item:
-                    p = path.get(part, Thing(d = None, t = "idea"))
-                    path[part] = p
-                    path = p
-                ret += path.getData()
+                if s.text != "what":
+                    item = [s.text]
+                    for head in memHeads.keys():
+                        for h in actions.getDependency(s, head):
+                            item.insert(0, memHeads[head].get(h.text, h.text))
+                    vb_be_childsearch(memChildsPath, item, s)
+                    path = mem
+                    for part in item:
+                        p = path.get(part, Thing(d = None, t = "idea"))
+                        path[part] = p
+                        path = p
+                    if path.getData() == None:
+                        ret += "I don't know. "
+                    else:
+                        ret += path.getData()
     else:
         for subject in subjects:
             for s in subject:
@@ -192,9 +214,7 @@ def vb_be(root, subjects):
                 for head in memHeads.keys():
                     for h in actions.getDependency(s, head):
                         item.insert(0, memHeads[head].get(h.text, h.text))
-                for child in memChilds:
-                    for c in actions.getDependency(s, child):
-                        item.append(c.text)
+                vb_be_childsearch(memChildsPath, item, s)
                 path = mem
                 for part in item:
                     p = path.get(part, Thing(d = None, t = "idea"))
@@ -206,13 +226,21 @@ def vb_be(root, subjects):
                     if len(val) > 0:
                         if path.writeable:
                             path.setData(val[0].text)
-                            ret += "okay"
+                            ret += "okay. "
                         else:
                             if val[0].text != path.getData():
-                                ret += "No, it's not."
+                                ret += "No, it's not. "
                             else:
-                                ret += "Yes, it is."
+                                ret += "Yes, it is. "
     return ret
+
+def vb_be_childsearch(p, item, s):
+    for child in p.keys():
+        for c in actions.getDependency(s, child):
+            item.append(c.text)
+            if p[child] != None:
+                vb_be_childsearch(p[child], item, c)
+    #return item
     
 vbz = {
     "be":vb_be

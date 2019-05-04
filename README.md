@@ -17,5 +17,6 @@ pythoncom
 pyttsx3
 pyaudio
 numpy
+jsons
 ```
 Also you will need python 3.__6__. Currently, pyaudio and some other dependencies have issues with 3.7. This version has been developed with python 3.6.8 for windows amd64, but other versions of python 3 prior to 3.7 __should__ work (no guarantees though).

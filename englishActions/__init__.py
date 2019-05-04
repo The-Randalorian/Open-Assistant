@@ -77,6 +77,9 @@ def process_text(text):
     
     vbf._close()
 
+def unknownVerb(root, nsubjects):
+    return ("sorry, I don't understand what " + root.text + " means")
+
 def processStatement(root, head):
     global name
     #print(head.text)
@@ -100,7 +103,7 @@ def processStatement(root, head):
                 else:
                     nsubjectnames[-1].append(item.text)
     #print(nsubjectnames)
-    text = vbf.vbz[root.lemma_](root, nsubjects)
+    text = vbf.vbz.get(root.lemma_, unknownVerb)(root, nsubjects)
     if text == None:
         text = "sorry, I didn't catch that."
     print("ASSIST:> " + text)

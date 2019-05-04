@@ -6,6 +6,9 @@ To start, type `converse` to begin talking with the assistant.
 Then just talk with it. Currently sentences with the following verbs will work. ANY SENTENCE WITH A DIFFERENT VERB WILL CAUSE THE PROGRAM TO CRASH.
 ```
 is - as in 'my name is bob' or 'what is my name'
+like - as in 'i like minecraft' or 'what do i like'
+need - as in 'i need food' or 'what do i need'
+want - as in 'i want a car' or 'what do i want'
 ```
 If you find a bug with any of these verbs, please feel free to copy the full program output into an issue so I can figure out what grammar rules I failed to account for. Alternatively feel free to add any verbs of your own, then submit a pull request for testing.
 

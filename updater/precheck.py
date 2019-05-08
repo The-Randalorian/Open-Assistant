@@ -59,8 +59,8 @@ Loads and processes APM files into usable forms
 
     #Replace local directories
     if plugins[-1]["updates"]["localroot"] != None:
-        for key in pathReplecements.keys():
-            plugins[-1]["updates"]["localroot"] = plugins[-1]["updates"]["localroot"].replace(key, pathReplecements[key])
+        for key in pathReplacements.keys():
+            plugins[-1]["updates"]["localroot"] = plugins[-1]["updates"]["localroot"].replace(key, pathReplacements[key])
         
     #Process json
     plugins[-1]["updates"]["files"] = json.loads(plugins[-1]["updates"]["files"])
@@ -120,7 +120,7 @@ pluginFileExtensions = {
     ".jpp": loadAPM, #.jpp - JukePi Plugin (DEPRECATED)
     ".apm": loadAPM, #.apm - APPLES Plugin Manifest
     }
-pathReplecements = {
+pathReplacements = {
     "_APPLES_": sys.path[0],
     }
 
@@ -162,8 +162,8 @@ for plugin in plugins:
                         for i, j in remoteManifest.items():
                             remoteManifest[i] = dict(j.items())
                         if remoteManifest["updates"]["localroot"] != None:
-                            for key in pathReplecements.keys():
-                                remoteManifest["updates"]["localroot"] = remoteManifest["updates"]["localroot"].replace(key, pathReplecements[key])
+                            for key in pathReplacements.keys():
+                                remoteManifest["updates"]["localroot"] = remoteManifest["updates"]["localroot"].replace(key, pathReplacements[key])
                         remoteManifest["updates"]["files"] = json.loads(remoteManifest["updates"]["files"])
                         update(plugin, remoteManifest)
                 

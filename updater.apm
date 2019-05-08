@@ -1,6 +1,6 @@
 [properties]
 name = updater
-version = 0.2.0
+version = 0.2.1
 service = updater
 exclusive = no
 
@@ -11,4 +11,4 @@ after = [{"plugin":"$core", "priority":0}]
 [updates]
 remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
 localroot = _APPLES_/
-files = [["updater.apm", "updater.apm"], ["updater/__init__.py", "updater/__init__.py"]]
+files = [["updater.apm", "updater.apm"], ["updater/__init__.py", "updater/__init__.py"], ["updater/precheck.py", "updater/precheck.py"]]

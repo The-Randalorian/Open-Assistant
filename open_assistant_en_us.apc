@@ -1,9 +1,9 @@
 {
-	"ver":"0.0.1",
+	"ver":"0.0.2",
 	"format":"0.1.0",
 	"name":"open_assistant_en_us",
 	"local":"_APPLES_/builtins.apc",
-	"remote":"https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/open_assistant_en_us.apc",
+	"remote":"https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/open_assistant_en_us.apc",
 	"collection":[
 		{
 			"type":"plugin",

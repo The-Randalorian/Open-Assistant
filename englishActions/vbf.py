@@ -13,6 +13,7 @@ class Thing:
     setTime = False
     def __init__(self, w=True, d="", t="string", a={}):
         self.writeable = w
+        self.dataValue = None
         self.setData(d=d, t=t)
         if Thing.setTime:
             self.settime = time.time()
@@ -38,6 +39,9 @@ class Thing:
                 self.dataValue = []
             if isinstance(d, Thing):
                 self.dataValue.append(d)
+            elif isinstance(d, list):
+                for item in d:
+                    self.dataValue.append(item)
             else:
                 self.dataValue.append(Thing(d=d))
                 print(d)
@@ -59,9 +63,9 @@ class Thing:
                 if isinstance(i, Link):
                     v.append("the " + i.getData())
                 elif isinstance(i, Thing):
-                    v.append("a " + i.getData())
+                    v.append(i.getData())
                 else:
-                    v.append("a " + i)
+                    v.append(i)
             if len(v) > 1:
                 v[-1] = v[-2] + " and " + v.pop(-1)
             return ", ".join(v)
@@ -133,6 +137,9 @@ class Link(Thing):
     def __getitem__(self, key):
         return self.ref[key]
 
+    def __setitem__(self, key, value):
+        self.ref[key] = value
+
     def getRef(self):
         return self
 
@@ -165,9 +172,72 @@ mem = {
         }),
     "cyan": Thing(w=False, d="cyan", t="string", a={
         }),
-    "color": Thing(w=False, d=None, t="idea", a={
+    "colors": Link("color"),
+    "color": Thing(w=False, d=[
+            Link("green"),
+            Link("red"),
+            Link("blue"),
+            Link("yellow"),
+            Link("orange"),
+            Link("purple"),
+            Link("pink"),
+            Link("white"),
+            Link("black"),
+            Link("brown"),
+            Link("cyan"),
+        ], t="collection", a={
         "best": Link("green"),
         "worst": Link("pink"),
+        "warm": Thing(w=False, d=[
+                Link("red"),
+                Link("orange"),
+                Link("yellow"),
+                Link("pink"),
+            ], t="collection", a={
+            }),
+        "cool": Thing(w=False, d=[
+                Link("green"),
+                Link("blue"),
+                Link("purple"),
+                Link("white"),
+                Link("black"),
+                Link("brown"),
+                Link("cyan"),
+            ], t="collection", a={
+            }),
+        }),
+    "minecraft": Thing(w=False, d="minecraft", t="string", a={
+        }),
+    "pokemon": Thing(w=False, d="pokemon", t="string", a={
+        }),
+    "mario": Thing(w=False, d="pokemon", t="string", a={
+        }),
+    "destiny": Thing(w=False, d="destiny", t="string", a={
+        "2": Thing(w=False, d="destiny 2", t="string", a={
+            }),
+        }),
+    "monopoly": Thing(w=False, d="monopoly", t="string", a={
+        }),
+    "sorry": Thing(w=False, d="sorry", t="string", a={
+        }),
+    "uno": Thing(w=False, d="uno", t="string", a={
+        }),
+    "poker": Thing(w=False, d="poker", t="string", a={
+        }),
+    "chess": Thing(w=False, d="chess", t="string", a={
+        }),
+    "checkers": Thing(w=False, d="checkers", t="string", a={
+        }),
+    "games": Thing(w=False, d=[
+            Link("minecraft"),
+            Link("pokemon"),
+            Link("monopoly"),
+            Link("sorry"),
+            Link("uno"),
+            Link("poker"),
+            Link("chess"),
+            Link("checkers"),
+        ], t="collection", a={
         }),
     "time": Thing(w=False, d=data_getTime, t="functional", a={
         }),
@@ -278,7 +348,6 @@ def vb_be(root, subjects):
                             item[-1] = memHeads[head].get(s.text.lower(), s.text.lower())
                     vb_be_childsearch(memChildsPath, item, s)
                     path = mem
-                    print(item)
                     for part in item:
                         p = path.get(part, Thing(d = None, t = "idea"))
                         path[part] = p
@@ -390,7 +459,6 @@ def vb_like(root, subjects):
                 item.append("likes")
                 vb_like_childsearch(memChildsPath, item, s)
                 path = mem
-                print(item)
                 for part in item:
                     p = path.get(part, Thing(d = None, t = "idea"))
                     path[part] = p
@@ -462,7 +530,6 @@ def vb_need(root, subjects):
                     item.append("needs")
                     vb_need_childsearch(memChildsPath, item, s)
                     path = mem
-                    print(item)
                     for part in item:
                         p = path.get(part, Thing(d = None, t = "idea"))
                         path[part] = p
@@ -483,7 +550,6 @@ def vb_need(root, subjects):
                 item.append("needs")
                 vb_need_childsearch(memChildsPath, item, s)
                 path = mem
-                print(item)
                 for part in item:
                     p = path.get(part, Thing(d = None, t = "idea"))
                     path[part] = p
@@ -555,7 +621,6 @@ def vb_want(root, subjects):
                     item.append("wants")
                     vb_want_childsearch(memChildsPath, item, s)
                     path = mem
-                    print(item)
                     for part in item:
                         p = path.get(part, Thing(d = None, t = "idea"))
                         path[part] = p
@@ -576,7 +641,6 @@ def vb_want(root, subjects):
                 item.append("wants")
                 vb_want_childsearch(memChildsPath, item, s)
                 path = mem
-                print(item)
                 for part in item:
                     p = path.get(part, Thing(d = None, t = "idea"))
                     path[part] = p

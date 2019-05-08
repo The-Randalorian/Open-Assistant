@@ -1,0 +1,29 @@
+{
+	"ver":"0.0.1",
+	"format":"0.1.0",
+	"name":"open_assistant_en_us",
+	"local":"_APPLES_/builtins.apc",
+	"remote":"https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/open_assistant_en_us.apc",
+	"collection":[
+		{
+			"type":"plugin",
+			"local":"_APPLES_/englishActions.apm",
+			"remote":"https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/englishActions.apm"
+		},
+		{
+			"type":"plugin",
+			"local":"_APPLES_/englishSTT.apm",
+			"remote":"https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/englishSTT.apm"
+		},
+		{
+			"type":"plugin",
+			"local":"_APPLES_/englishTTS.apm",
+			"remote":"https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/englishTTS.apm"
+		},
+		{
+			"type":"collection",
+			"local":"_APPLES_/builtins.apc",
+			"remote":"https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/builtins.apc",
+		}
+	]
+}

@@ -13,6 +13,7 @@ import importlib    #Library used for dynamically loading libriaries
 import configparser #Library used for reading library information
 import json         #Library used for reading load order information
 import traceback    #Library used for getting error information
+import urllib.request
 #import copy         #Library used for copying info for ordering
 
 
@@ -23,6 +24,10 @@ import traceback    #Library used for getting error information
 #   Basic Config
 #===============================================================================
 LOGLEVEL = 3 # 3 = prints, 2 = warnings, 1 = errors, 0 = crash
+pathReplacements = {
+    "_APPLES_": sys.path[0],
+    "\\":"/"
+    }
 
 
 
@@ -33,6 +38,70 @@ LOGLEVEL = 3 # 3 = prints, 2 = warnings, 1 = errors, 0 = crash
 #===============================================================================
 class RuleException(Exception): #Create a custom exception for my purposes
     pass #it does nothing special
+
+def replacePath(local):
+    for key in pathReplacements.keys():
+        local = local.replace(key, pathReplacements[key])
+    return local
+
+def getLocRem(local, remote):
+    local = replacePath(local)
+    remoteFile = urllib.request.urlopen(remote)
+    print(local)
+    with open(local, 'wb') as localFile:  
+        localFile.write(remoteFile.read())
+    
+
+APC_formats = ["0.0.0", "0.1.0"]
+def loadAPC(filepath):
+    with open(filepath, "r") as file:
+        localData = json.load(file)
+        if localData.get("format", "0.0.0") in APC_formats:
+            try:
+                with urllib.request.urlopen(localData["remote"]) as response:
+                    remoteData = json.loads(response.read().decode())
+                    if remoteData.get("format", "0.0.0") in APC_formats:
+                        if localData.get("version") != remoteData.get("version"):
+                            getLocRem(data["local"], data["remote"])
+            except Exception as e:
+                print(e)
+    with open(filepath, "r") as file:
+        data = json.load(file)
+        for entry in data["collection"]:
+            if entry["type"].lower() == "file":
+                if not os.path.isfile(replacePath(entry["local"])):
+                    getLocRem(entry["local"], entry["remote"])
+            if entry["type"].lower() == "plugin":
+                if not os.path.isfile(replacePath(entry["local"])):
+                    getLocRem(entry["local"], entry["remote"])
+                    plugin = configparser.ConfigParser()
+                    plugin.read(replacePath(entry["local"]))
+                    for pluginDep in json.loads(plugin["updates"]["files"]):
+                        pluginDep[0] = plugin["updates"]["localroot"] + pluginDep[0]
+                        pluginDep[0] = replacePath(pluginDep[0])
+                        if not os.path.isfile(pluginDep[0]):
+                            pluginDep[1] = plugin["updates"]["remoteroot"] + pluginDep[1]
+                            filepath = pluginDep[0].rsplit("/", 1)[0]
+                            if not os.path.exists(filepath):
+                                os.makedirs(filepath)
+                            getLocRem(pluginDep[0], pluginDep[1])
+                        
+            if entry["type"].lower() == "collection":
+                if not os.path.isfile(replacePath(entry["local"])):
+                    getLocRem(entry["local"], entry["remote"])
+                loadAPC(replacePath(entry["local"]))
+                    
+            
+
+def loadAPCs():
+    for file in os.listdir(sys.path[0]):
+        if os.path.isfile(os.path.join(sys.path[0], file)):
+            if file[-4:].lower() == ".apc":
+                loadAPC(os.path.join(sys.path[0], file))
+
+loadAPCs()
+                
+        
 
 def loadAPM(file):
     '''

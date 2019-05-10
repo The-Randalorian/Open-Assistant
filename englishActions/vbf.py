@@ -44,7 +44,6 @@ class Thing:
                     self.dataValue.append(item)
             else:
                 self.dataValue.append(Thing(d=d))
-                print(d)
         else:   
             self.dataValue = d
 
@@ -438,7 +437,6 @@ def vb_like(root, subjects):
                     item.append("likes")
                     vb_like_childsearch(memChildsPath, item, s)
                     path = mem
-                    print(item)
                     for part in item:
                         p = path.get(part, Thing(d = None, t = "idea"))
                         path[part] = p

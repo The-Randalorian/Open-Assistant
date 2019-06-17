@@ -1,0 +1,14 @@
+[properties]
+name = haYeelight
+version = 0.1.0
+service = homeAutomationYeelight
+exclusive = no
+
+[order]
+before = []
+after = [{"plugin":"$homeAutomation", "priority":0}]
+
+[updates]
+remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
+localroot = _APPLES_/
+files = [["haYeelight.apm", "haYeelight.apm"], ["haYeelight/__init__.py", "haYeelight/__init__.py"]]

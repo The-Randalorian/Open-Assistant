@@ -2,7 +2,11 @@
 A work-in-progress open source python assistant, which will, hopefully, turn out similar to alexa, siri, cortana, and others.
 
 # Installation
-Install the required packages (see below) then download `apples.py` and `open_assistant_en_us.apc` from here. Run apples.py and it will download the everything else automatically. Every thing 'should' automatically update as well.
+Install the required packages (see below) then download `apples.py` and `open_assistant_en_us.apc` from here. Run apples.py and it will download every required package automatically. Everything 'should' automatically update as well.
+Currently, a few smart home devices are supported, and must be installed separately. To install them, copy the specified file to the root directory on your local machine. and run the command specified to install necessary addons.
+*yeelight `yeelight.apm` `pip install yeelight`
+*
+
 
 # Required Packages
 The following is a list of libraries required for open assistant:

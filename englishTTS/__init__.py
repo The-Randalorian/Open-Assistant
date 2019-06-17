@@ -1,6 +1,8 @@
-import pythoncom
+import os
 
-pythoncom.CoInitialize()
+if os.name == 'nt':
+    import pythoncom
+    pythoncom.CoInitialize()
 
 import threading, time
 from queue import Queue
@@ -46,7 +48,8 @@ def closeThread():
 
 def threadScript():
     global voices, voiceNames
-    pythoncom.CoInitialize()
+    if os.name == 'nt':
+        pythoncom.CoInitialize()
     engine = pyttsx3.init()
     voices = engine.getProperty('voices')
     for voice in voices:

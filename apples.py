@@ -61,8 +61,8 @@ def loadAPC(filepath):
                 with urllib.request.urlopen(localData["remote"]) as response:
                     remoteData = json.loads(response.read().decode())
                     if remoteData.get("format", "0.0.0") in APC_formats:
-                        if localData.get("version") != remoteData.get("version"):
-                            getLocRem(data["local"], data["remote"])
+                        if localData.get("ver") != remoteData.get("ver"):
+                            getLocRem(remoteData["local"], remoteData["remote"])
             except Exception as e:
                 print(e)
     with open(filepath, "r") as file:

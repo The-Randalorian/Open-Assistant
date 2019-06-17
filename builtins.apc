@@ -1,5 +1,5 @@
 {
-	"ver":"0.0.1",
+	"ver":"0.0.2",
 	"format":"0.1.0",
 	"name":"builtins",
 	"local":"_APPLES_/builtins.apc",
@@ -17,8 +17,8 @@
 		},
 		{
 			"type":"plugin",
-			"local":"_APPLES_/updater.apm",
-			"remote":"https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/updater.apm"
+			"local":"_APPLES_/plugman.apm",
+			"remote":"https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/plugman.apm"
 		},
 		{
 			"type":"file",

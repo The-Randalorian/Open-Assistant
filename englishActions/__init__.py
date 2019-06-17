@@ -73,14 +73,14 @@ def process_text(text):
     roots = getConjuncts(root)
 
     for token in roots:
-        processStatement(root, token)
+        processStatement(root, token, doc)
     
     vbf._close()
 
 def unknownVerb(root, nsubjects):
     return ("sorry, I don't understand what " + root.text + " means")
 
-def processStatement(root, head):
+def processStatement(root, head, doc):
     global name
     #print(head.text)
     #print(head.tag_)
@@ -103,7 +103,22 @@ def processStatement(root, head):
                 else:
                     nsubjectnames[-1].append(item.text)
     #print(nsubjectnames)
-    text = vbf.vbz.get(root.lemma_, unknownVerb)(root, nsubjects)
+    predicate = None
+    for chunk in doc.noun_chunks:
+        if chunk.root.dep_ == "pobj":
+            if chunk.root.text in vbf.mem.keys():
+                predicate = chunk.root
+    if predicate == None:
+        for chunk in doc.noun_chunks:
+            if chunk.root.dep_ == "dobj":
+                if chunk.root.text in vbf.mem.keys():
+                    predicate = chunk.root
+    text = None
+    if predicate != None and predicate.text in vbf.mem.keys():
+        if getattr(vbf.mem[predicate.text], "call", None) != None:
+            text = vbf.mem[predicate.text].call(root, nsubjects)
+    if text == None:
+        text = vbf.vbz.get(root.lemma_, unknownVerb)(root, nsubjects)
     if text == None:
         text = "sorry, I didn't catch that."
     print("ASSIST:> " + text)

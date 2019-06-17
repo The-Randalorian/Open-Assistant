@@ -11,10 +11,12 @@ memformat = "0.3.0"
 
 class Thing:
     setTime = False
-    def __init__(self, w=True, d="", t="string", a={}):
+    def __init__(self, w=True, d="", t="string", a={}, p={}):
         self.writeable = w
         self.dataValue = None
         self.setData(d=d, t=t)
+        self.pickleable = True
+        self.parameters = p
         if Thing.setTime:
             self.settime = time.time()
         else:
@@ -72,6 +74,9 @@ class Thing:
             return None
         elif self.dataType == "functional":
             return self.dataValue()
+
+    def getRawData(self):
+        return self.dataValue
         
     def get(self, key, value):
         return self.attributes.get(key, value)
@@ -111,6 +116,10 @@ class Link(Thing):
     def writeable(self, w):
         self.ref.writeable = w
 
+    @property
+    def pickleable(self):
+        return self.ref.pickleable
+
     def linkTo(self):
         global mem
         path = self.path.split(".")
@@ -129,6 +138,9 @@ class Link(Thing):
 
     def getData(self):
         return self.ref.getData()
+
+    def getRawData(self):
+        return self.ref.getRawData()
 
     def get(self, key, value):
         return self.ref.get(key, value)
@@ -150,26 +162,48 @@ def data_getDate():
 
 mem = {
     "green": Thing(w=False, d="green", t="string", a={
+        }, p={
+        "color_rgb":(0,255,0),
         }),
     "red": Thing(w=False, d="red", t="string", a={
+        }, p={
+        "color_rgb":(255,0,0),
         }),
     "blue": Thing(w=False, d="blue", t="string", a={
+        }, p={
+        "color_rgb":(0,0,255),
         }),
     "yellow": Thing(w=False, d="yellow", t="string", a={
+        }, p={
+        "color_rgb":(255,255,0),
         }),
     "orange": Thing(w=False, d="orange", t="string", a={
+        }, p={
+        "color_rgb":(255,165,0),
         }),
     "purple": Thing(w=False, d="purple", t="string", a={
+        }, p={
+        "color_rgb":(128,0,128),
         }),
     "pink": Thing(w=False, d="pink", t="string", a={
+        }, p={
+        "color_rgb":(255,192,203),
         }),
     "white": Thing(w=False, d="white", t="string", a={
+        }, p={
+        "color_rgb":(255,255,255),
         }),
     "black": Thing(w=False, d="black", t="string", a={
+        }, p={
+        "color_rgb":(0,0,0),
         }),
     "brown": Thing(w=False, d="brown", t="string", a={
+        }, p={
+        "color_rgb":(165,42,42),
         }),
     "cyan": Thing(w=False, d="cyan", t="string", a={
+        }, p={
+        "color_rgb":(0,255,255),
         }),
     "colors": Link("color"),
     "color": Thing(w=False, d=[

@@ -137,35 +137,39 @@ for file in os.listdir(sys.path[0]):
 
 for plugin in plugins:
     if plugin["updates"]["localroot"] != None and plugin["updates"]["remoteroot"] != None:
-        urls = createURLs(plugin["updates"]["localroot"], plugin["updates"]["remoteroot"], plugin["updates"]["files"])
-        man = findManifest(plugin)
+        try:
+            urls = createURLs(plugin["updates"]["localroot"], plugin["updates"]["remoteroot"], plugin["updates"]["files"])
+            man = findManifest(plugin)
 
 
-        remoteManifest = configparser.ConfigParser()
-        localVer = plugin["properties"]["version"].split(".")
-        for num in range(0, len(localVer)):
-            localVer[num] = int(localVer[num])
+            remoteManifest = configparser.ConfigParser()
+            localVer = plugin["properties"]["version"].split(".")
+            for num in range(0, len(localVer)):
+                localVer[num] = int(localVer[num])
 
-        with urllib.request.urlopen(urls[man][1]) as response:
-            remoteManifest.read_string(response.read().decode())
-            remoteVer = remoteManifest["properties"]["version"].split(".")
-            if len(remoteVer) != len(localVer):
-                update(localManifest, remoteManifest)
-            else:
-                for num in range(0, len(remoteVer)):
-                    if int(remoteVer[num]) == localVer[num]:
-                        continue
-                    elif int(remoteVer[num]) < localVer[num]:
-                        break
-                    else:
-                        remoteManifest = dict(remoteManifest.items())
-                        for i, j in remoteManifest.items():
-                            remoteManifest[i] = dict(j.items())
-                        if remoteManifest["updates"]["localroot"] != None:
-                            for key in pathReplacements.keys():
-                                remoteManifest["updates"]["localroot"] = remoteManifest["updates"]["localroot"].replace(key, pathReplacements[key])
-                        remoteManifest["updates"]["files"] = json.loads(remoteManifest["updates"]["files"])
-                        update(plugin, remoteManifest)
+            with urllib.request.urlopen(urls[man][1]) as response:
+                remoteManifest.read_string(response.read().decode())
+                remoteVer = remoteManifest["properties"]["version"].split(".")
+                if len(remoteVer) != len(localVer):
+                    update(localManifest, remoteManifest)
+                else:
+                    for num in range(0, len(remoteVer)):
+                        if int(remoteVer[num]) == localVer[num]:
+                            continue
+                        elif int(remoteVer[num]) < localVer[num]:
+                            break
+                        else:
+                            remoteManifest = dict(remoteManifest.items())
+                            for i, j in remoteManifest.items():
+                                remoteManifest[i] = dict(j.items())
+                            if remoteManifest["updates"]["localroot"] != None:
+                                for key in pathReplacements.keys():
+                                    remoteManifest["updates"]["localroot"] = remoteManifest["updates"]["localroot"].replace(key, pathReplacements[key])
+                            remoteManifest["updates"]["files"] = json.loads(remoteManifest["updates"]["files"])
+                            update(plugin, remoteManifest)
+        except Exception as e:
+            if LOGLEVEL <= 0:
+                raise e
                 
             
      

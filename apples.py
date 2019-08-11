@@ -50,7 +50,6 @@ def getLocRem(local, remote):
     print(local)
     with open(local, 'wb') as localFile:  
         localFile.write(remoteFile.read())
-    
 
 APC_formats = ["0.0.0", "0.1.0"]
 def loadAPC(filepath):

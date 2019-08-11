@@ -1,6 +1,6 @@
 [properties]
 name = terminal
-version = 0.2.3
+version = 0.3.0
 service = userInterface
 exclusive = no
 

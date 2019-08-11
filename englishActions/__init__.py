@@ -10,7 +10,7 @@ runThread = None
 threadActive = False
 conversing = True
 nlp = spacy.load("en_core_web_sm")
-name = "Olivia"
+name = "Holo"
 
 def _register_(serviceList, pluginProperties):
     global services, plugin, core, tts
@@ -110,7 +110,7 @@ def processStatement(root, head, doc):
                 predicate = chunk.root
     if predicate == None:
         for chunk in doc.noun_chunks:
-            if chunk.root.dep_ == "dobj":
+            if chunk.root.dep_ == "dobj" or chunk.root.dep_ == "pobj":
                 if chunk.root.text in vbf.mem.keys():
                     predicate = chunk.root
     text = None

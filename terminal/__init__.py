@@ -31,8 +31,22 @@ def loopTask():
             print(tickets[0][1])
         del tickets[0]
     rawCommand = input(">:").split(" ")
+    quoted = False
+    quotedCommand = []
     for section in range(0, len(rawCommand)):
-        if ("." in rawCommand[section] or section == 0) and not (rawCommand[section][0] == '"' and rawCommand[section][-1] == '"'):
+        if quoted:
+            if rawCommand[section][-1] == '"':
+                quoted = False
+            quotedCommand[-1] += " " + rawCommand[section]
+        else:
+            if rawCommand[section][0] == '"':
+                quoted = True
+            quotedCommand.append(rawCommand[section])
+    rawCommand = quotedCommand
+    for section in range(0, len(rawCommand)):
+        if rawCommand[section][0] == '"' and rawCommand[section][-1] == '"':
+            rawCommand[section] = rawCommand[section][1:-1]
+        elif ("." in rawCommand[section] or section == 0):
             rawCommand[section] = rawCommand[section].split(".")
     action = copy.deepcopy(commands)
     for part in rawCommand[0]:

@@ -116,3 +116,5 @@ dmypy.json
 # prevent personal user information created during testing from being uploaded by accident
 *.mem
 *.oam
+
+/englishSTT/models/

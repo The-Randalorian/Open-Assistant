@@ -1,0 +1,14 @@
+[properties]
+name = audioRecorder
+version = 0.0.0
+service = audioRecorder
+exclusive = yes
+
+[order]
+before = []
+after = [{"plugin":"$core", "priority":0}]
+
+[updates]
+remoteroot = https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/
+localroot = _APPLES_/
+files = [["audioRecorder.apm", "audioRecorder.apm"], ["audioRecorder/__init__.py", "audioRecorder/__init__.py"]]

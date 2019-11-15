@@ -12,25 +12,29 @@ Currently, a few smart home devices are supported, and must be installed separat
 The following is a list of libraries required for open assistant:
 ```
 spacy
-pythoncom
+pywin32
 pyttsx3
 pyaudio
 numpy
 jsons
+tensorflow
+deepspeech
+yeelight
 ```
 These can be installed by opening up the command line and running:
 ```
-python -m pip install spacy pythoncom pyttsx3 pyaudio numpy jsons
+python -m pip install spacy pywin32 pyttsx3 pyaudio numpy jsons tensorflow deepspeech yeelight
 ```
 Also you will need python 3.__6__. Currently, pyaudio and some other dependencies have issues with 3.7. This version has been developed with python 3.6.8 for windows amd64, but other versions of python 3 prior to 3.7 __should__ work (no guarantees though).
 
 # Usage
-To start, type `converse` to begin talking with the assistant.
-Then just talk with it. Currently sentences with the following verbs will work. ANY SENTENCE WITH A DIFFERENT VERB WILL CAUSE THE PROGRAM TO CRASH.
+Press the trigger button or type `trigger` in the terminal to make the system listen for your speech. (CURRENTLY VERY BUGGY)
+Alternatively, type `converse` to begin a text based "conversation" with the assistant.
+Then just talk with it. Currently sentences with the following verbs will work. Verbs not listed here will probably not work, and could potentially cause a crash.
 ```
 is - as in 'my name is bob' or 'what is my name'
 like - as in 'i like minecraft' or 'what do i like'
 need - as in 'i need food' or 'what do i need'
 want - as in 'i want a car' or 'what do i want'
 ```
-If you find a bug with any of these verbs, please feel free to copy the full program output into an issue so I can figure out what grammar rules I failed to account for. Alternatively feel free to add any verbs of your own, then submit a pull request for testing.
+If you find a bug with any of these verbs, please feel free to copy the full program output into an issue so I can figure out what grammar rules have not been accounted for. Alternatively feel free to add any verbs of your own, then submit a pull request for testing.

@@ -205,6 +205,7 @@ mem = {
         }, p={
         "color_rgb":(0,255,255),
         }),
+    "colour": Link("color"),
     "colors": Link("color"),
     "color": Thing(w=False, d=[
             Link("green"),

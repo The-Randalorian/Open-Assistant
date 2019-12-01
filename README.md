@@ -1,14 +1,13 @@
 # Open Assistant
 A work-in-progress open source python assistant, which will, hopefully, turn out similar to alexa, siri, cortana, and others.
 
-# Installation
+## Installation
 Install the required packages (see below) then download `apples.py` and `open_assistant_en_us.apc` from here. Run apples.py and it will download every required package automatically. Everything 'should' automatically update as well.
 Currently, a few smart home devices are supported, and must be installed separately. To install them, copy the specified file to the root directory on your local machine. and run the command specified to install necessary addons.
 *yeelight `yeelight.apm` `pip install yeelight`
-*
 
 
-# Required Packages
+## Required Packages
 The following is a list of libraries required for open assistant:
 ```
 spacy
@@ -21,13 +20,21 @@ tensorflow
 deepspeech
 yeelight
 ```
-These can be installed by opening up the command line and running:
+If you have python version 3.__6__ or __older__ run the following command in a command line.
 ```
 python -m pip install spacy pywin32 pyttsx3 pyaudio numpy jsons tensorflow deepspeech yeelight
 ```
-Also you will need python 3.__6__. Currently, pyaudio and some other dependencies have issues with 3.7. This version has been developed with python 3.6.8 for windows amd64, but other versions of python 3 prior to 3.7 __should__ work (no guarantees though).
+If you have python version 3.__7__ run the following command in the command line.
+```
+python -m pip install spacy pywin32 pyttsx3 numpy jsons tensorflow deepspeech yeelight
+```
+You will then have to install pyaudio manually. First download it from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio), then install it with:
+```
+python -m pip install <downloaded file path>
+```
+Currently, python 3.__8__ and __newer__ are not supported because they do not have builds of tensorflow out yet.
 
-# Usage
+## Usage
 Press the trigger button or type `trigger` in the terminal to make the system listen for your speech. (CURRENTLY VERY BUGGY)
 Alternatively, type `converse` to begin a text based "conversation" with the assistant.
 Then just talk with it. Currently sentences with the following verbs will work. Verbs not listed here will probably not work, and could potentially cause a crash.

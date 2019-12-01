@@ -1,4 +1,4 @@
-import threading, time, deepspeech
+import threading, time, deepspeech, audioop
 import numpy as np
 
 services = {}
@@ -11,6 +11,7 @@ dsModel = None
 stream = None
 audsrc = None
 actions = None
+working = False
 
 def _register_(serviceList, pluginProperties):
     global services, plugin, core, audioRecorder, dsModel, stream, audsrc, actions
@@ -35,6 +36,11 @@ def _register_(serviceList, pluginProperties):
         0.75,
         1.85)
 
+    # DeepSpeech locks up after the first few frames, this clears that up
+    stream = dsModel.setupStream()
+    dsModel.feedAudioContent(stream, [0, 0, 0, 0, 65535, 65535, 65535, 65535] * 8192)
+    dsModel.finishStream(stream)
+
     services["userInterface"][0].addCommands({"trigger": trigger})
 
     #core.addStart(trigger)
@@ -43,49 +49,63 @@ def _register_(serviceList, pluginProperties):
     #core.addLoop(loopTask)
 
 def trigger(*args):
-    global services, plugin, core, audioRecorder, dsModel, audsrc, actions
-    import wave, pyaudio
-    #audioRecorder = services["audioRecorder"][0]
-    #audsrc = audioRecorder.AudioSource()
-    WAVE_OUTPUT_FILENAME = "englishSTT\lastRecord.wav"
-    print("loading stream")
-    stream = dsModel.setupStream()
-    print("model loaded")
-    audbuf = audsrc.getBuffer()
-    print(audbuf)
-    print("ready to record")
-    Recordframes = []
-    cnt = 0
-    for i in range(0, int(16000 / 256 * 15)):
-        print(cnt)
-        cnt+=1
-        sample = next(audbuf)
-        print(sample)
-        Recordframes.append(sample)
-        dat = np.frombuffer(sample, np.int16)
-        dsModel.feedAudioContent(stream, dat)
-        #print(dat)
-    audbuf.stopRecording()
-    #next(audsrc)
-    print("done 1")
-    waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-    waveFile.setnchannels(1)
-    waveFile.setsampwidth(2)
-    waveFile.setframerate(16000)
-    waveFile.writeframes(b''.join(Recordframes))
-    waveFile.close()
-    try:
-        stt = dsModel.finishStream(stream)
-        print(stt)
-    except Exception as e:
-        print(e)
-    print("done 2")
-    print(stt)
-    print(type(stt))
-    print("done 3")
-    print("processing")
-    if stt:
-        actions.process_text(stt)
+    global working
+    if not working:
+        working = True
+        global services, plugin, core, audioRecorder, dsModel, audsrc, actions
+        import wave, pyaudio
+        #audioRecorder = services["audioRecorder"][0]
+        #audsrc = audioRecorder.AudioSource()
+        WAVE_OUTPUT_FILENAME = "englishSTT\lastRecord.wav"
+        stream = dsModel.setupStream()
+        audbuf = audsrc.getBuffer()
+        Recordframes = []
+        cnt = 0
+        vc = -1
+        #for i in range(0, int(16000 / 256 * 10)):
+        while True:
+            cnt+=1
+            sample = next(audbuf)
+            vol = audioop.rms(sample,2)
+            #print(vol)
+            if vc < 0:
+                if vol >= 400:
+                    vc = 0
+            else:
+                if vol < 20:
+                    vc += 1
+                else:
+                    vc = 0
+            if vc > 32:
+                break
+            #print("#"*vol, end="")
+            #print(sample)
+            Recordframes.append(sample)
+            dat = np.frombuffer(sample, np.int16)
+            dsModel.feedAudioContent(stream, dat)
+            #print(dat)
+        print()
+        audbuf.stopRecording()
+        #next(audsrc)
+        waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+        waveFile.setnchannels(1)
+        waveFile.setsampwidth(2)
+        waveFile.setframerate(16000)
+        waveFile.writeframes(b''.join(Recordframes))
+        waveFile.close()
+        try:
+            stt = dsModel.finishStream(stream)
+        except Exception as e:
+            print(e)
+        if stt:
+            print(stt)
+            try:
+                actions.process_text(stt)
+            except:
+                print("Error Processing Audio")
+        else:
+            print("No intelligible audio heard.")
+        working = False
 
 def loopTask():
     pass

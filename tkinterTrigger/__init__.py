@@ -1,5 +1,5 @@
 import threading, time
-from tkinter import Tk, Button
+from tkinter import Tk, Button, PhotoImage
 
 services = {}
 plugin = {}
@@ -35,10 +35,17 @@ def closeThread():
 def threadScript():
     global threadActive, stt
     root = Tk("OpenAssistant Trigger")
+    root.overrideredirect(1)
+    root.config(bg="#151515")
     def callback():
-        rt = threading.Thread(target = stt.trigger())
-        rt.start()
-    b = Button(root, text="Trigger", command=callback)
+        try:
+            rt = threading.Thread(target = stt.trigger())
+            rt.start()
+        except:
+            pass
+    b = Button(root, text="Trigger", command=callback, bg="#151515", fg="#3DB8B8")
+    photo=PhotoImage(file="tkinterTrigger\logo.png")
+    b.config(image=photo,width="200",height="200")
     b.pack()
     root.mainloop()
     while threadActive:

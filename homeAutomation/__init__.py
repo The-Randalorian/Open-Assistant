@@ -5,181 +5,150 @@ services = {}
 plugin = {}
 core = None
 actions = None
-vbf = None
+understanding = None
+speech = None
+general_knowledge = None
+Thing = None
 runThread = None
 threadActive = False
+num_pat = re.compile(r"(-?)((\d+)\.(\d*))")
+
 
 def _register_(serviceList, pluginProperties):
-    global services, plugin, core, actions, vbf
-    global AutomationInterface, AutomationSwitch, AutomationScalar, AutomationSmartBulb
+    global services, plugin, core, actions
+    global understanding, speech, general_knowledge, Thing
     services = serviceList
     plugin = pluginProperties
     core = services["core"][0]
     actions = services["actions"][0]
-    vbf = actions.vbf
+    understanding = actions.understanding
+    speech = actions.speech
+    general_knowledge = actions.general_knowledge
+    Thing = understanding.Thing
+    _make_classes()
+    #light = AutomationSmartLightColor(name="light")
 
-    class AutomationInterface(vbf.Thing):
-        def __init__(self, a={}):
-            self.writeable = False
-            self.dataValue = None
-            self.dataType = "auto"
-            self.pickleable = False
-            self.settime = 0
-            self.attributes = a
-            self.commands = {}
 
-        def setCommand(self, path, function):
-            if isinstance(path, str):
-                path = [path]
-            commandPath = self.commands
-            final = path.pop(-1)
-            for p in path:
-                cp = commandPath.get(p, {})
-                commandPath[p] = cp
-                commandPath = cp
-            commandPath[final] = commandPath.get(final, {})
-            commandPath[final]["_"] = function
+def _make_classes():
+    _make_automation_interface()
+    _make_automation_toggle()
+    _make_automation_scalar()
+    _make_automation_smart_light_white()
+    _make_automation_smart_light_color()
 
-        def call(self, root, subjects):
-            searchPath = [root]
-            validPath = []
-            searchPath.extend(actions.getDependency(root, u'prep'))
-            searchPath.extend(actions.getDependency(root, u'prt'))
-            searchPath.extend(actions.getDependency(root, u'dobj'))
-            #print(searchPath)
 
-            targets = actions.getDependency(searchPath[-1], u'pobj')
-            if len(targets) <= 0:
-                targets = actions.getDependency(root, u'dobj')
-            target = targets[0].text
-            vp = self.commands
-            for w in range(0, len(searchPath)):
-                if vp.get(searchPath[w].text, None) != None:
-                    vp = vp[searchPath[w].text]
-                    validPath.append(searchPath[w].text)
-            #print(searchPath)
-            return self.performAction(root, *validPath)
-        
-        def performAction(self, root, *args, **kwargs):
-            args = list(args)
-            commandPath = self.commands
-            while len(args) > 0:
-                for s in args:
-                    cp = commandPath.get(s,{})
-                    commandPath[s] = cp
-                    commandPath = cp
-                    args.remove(s)
-            #print(f"{args}: {kwargs}")
-            if commandPath.get("_", None) != None and callable(commandPath["_"]):
-                return commandPath["_"](root)
-            return None
+def _make_automation_interface():
+    global AutomationInterface
 
-    class AutomationSwitch(AutomationInterface):
-        def __init__(self, a={}):
-            super().__init__(a)
-            self.setCommand(["turn", "on"], self.turnOn)
-            self.setCommand(["turn", "off"], self.turnOff)
+    class AutomationInterface(Thing):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
 
-        def turnOn(self, root, *args, **kwargs):
-            return "Default " + type(self).__name__ + " turnOn function. Override me!"
+        def add_action_to_system(self, function, roots):
+            for root in roots:
+                action = understanding.Action(
+                    function=function,
+                    root=root,
+                    thing=self
+                )
+                general_knowledge.SystemPersonality.add_system_action(action)
 
-        def turnOff(self, root, *args, **kwargs):
-            return "Default " + type(self).__name__ + " turnOff function. Override me!"
 
-    class AutomationScalar(AutomationSwitch):
-        def __init__(self, a={}):
-            super().__init__(a)
-            self.setCommand(["set", "brightness"], self.setLevel)
+def _make_automation_toggle():
+    global AutomationToggle
 
-        def setLevel(self, root, *args, **kwargs):
-            try:
-                n = actions.getDependency(root, u'prep')[0]
-                n = actions.getDependency(n, u'pobj')[0]
-                n = actions.getDependency(n, u'nummod')[0]
-                return "Default " + type(self).__name__ + " setLevel function. Input was " + n.text + ". Override me!"
-            except:
-                return "Sorry, I didn't catch what level you want me to set that too."
+    class AutomationToggle(AutomationInterface):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            self.add_action_to_system(
+                self._toggle_action,
+                ("toggle", "turn", "switch")
+            )
 
-    class AutomationSmartBulb(AutomationScalar):
-        def __init__(self, a={}):
-            super().__init__(a)
-            self.setCommand(["set", "color"], self.setColor)
+        def _toggle_action(self, verb):
+            '''Toggle action. Turns speech parts into usable data.'''
+            for advmod in verb.advmod:
+                if advmod == "on":
+                    return self.toggleOn()
+                elif advmod == "off":
+                    return self.toggleOff()
 
-        def setColor(self, root, *args, **kwargs):
-            raw = kwargs.get("raw", False)
-            try:
-                n = None
-                for color in vbf.mem["colors"].getRawData():
-                    n = recursiveSearchText(root, color.getData())
-                    if n != None:
-                        break
-                n = vbf.mem[n.text]
-                n = n.parameters['color_rgb']
-                if raw:
-                    return n
-                else:
-                    return "Default " + type(self).__name__ + " setColor function. Input was " + str(n) + ". Override me!"
-            except KeyError as e:
-                if raw:
-                    return None
-                else:
-                    return "Sorry, I didn't catch what color you want me to set that too."
+        def toggleOn(self):
+            print("Default AutomationToggle turnOn function.")
+            return "Default AutomationToggle turnOn function."
 
-    #vbf.mem["lights"] = AutomationSmartBulb()
-    #vbf.vbz["turn"] = vb_action
-    
-    #core.addStart(startThread)
-    #core.addClose(closeThread)
-    #core.addLoop(loopTask)
+        def toggleOff(self):
+            print("Default AutomationToggle turnOff function.")
+            return "Default AutomationToggle turnOff function."
 
-def loopTask():
-    pass
 
-def startThread():
-    global runThread
-    threadActive = True
-    runThread = threading.Thread(target = threadScript)
-    runThread.start()
+def _make_automation_scalar():
+    global AutomationScalar
 
-def closeThread():
-    global runThread
-    threadActive = False
-    runThread.join()
+    class AutomationScalar(AutomationInterface):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            self.add_action_to_system(
+                self._set_action,
+                ("set",)
+            )
 
-def threadScript():
-    global threadActive
-    threadActive = False
+        def _set_action(self, verb):
+            '''Set action. Turns speech parts into usable data.'''
+            for obl in verb.obl:
+                raw_num = re.match(num_pat, obl.text)
+                if raw_num is None:
+                    if len(obl.nummods) <= 0:
+                        continue
+                    raw_num = re.match(num_pat, obl.nummods[0].text)
+                num = int(raw_num.group(0))
+                if obl.text == "percent":
+                    num = num/100.0
+                return self.setLevel()
+            return "Sorry, I didn't catch that."
 
-def recursiveSearchDep_(root, target):
-    if root.dep_ == target:
-        return root
-    for c in root.children:
-        val = None
-        val = recursiveSearchDep_(c, target)
-        if val != None:
-            return val
-    return None
+        def setLevel(self, level):
+            print("Default AutomationScalar setLevel function.")
+            print(f"level = {level}")
+            s = "Default AutomationScalar setLevel function."
+            s += f" Level set to {level}."
+            return s
 
-def recursiveSearchText(root, target):
-    if root.text == target:
-        return root
-    for c in root.children:
-        val = None
-        val = recursiveSearchText(c, target)
-        if val != None:
-            return val
-    return None
 
-def vb_action(root, subjects):
-    searchPath = [root]
-    searchPath.extend(actions.getDependency(root, u'prep'))
-    searchPath.extend(actions.getDependency(root, u'prt'))
+def _make_automation_smart_light_white():
+    global AutomationSmartLightWhite
 
-    targets = actions.getDependency(searchPath[-1], u'pobj')
-    if len(targets) <= 0:
-        targets = actions.getDependency(root, u'dobj')
-    target = targets[0].text
-    for w in range(0, len(searchPath)):
-        searchPath[w] = searchPath[w].text
-    #print(searchPath)
-    return vbf.mem[target].performAction(*searchPath)
+    class AutomationSmartLightWhite(AutomationScalar, AutomationToggle):
+        def __init__(self, level_aliases=("level", "brightness"), **kwargs):
+            super().__init__(**kwargs)
+            self.add_action_to_system(
+                self._set_action,
+                ("dim", "brighten", "darken")
+            )
+
+
+def _make_automation_smart_light_color():
+    global AutomationSmartLightColor
+
+    class AutomationSmartLightColor(AutomationSmartLightWhite):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            self.add_action_to_system(
+                self._set_color_action,
+                ("set", "make")
+            )
+
+        def _set_color_action(self, verb):
+            '''Set action for color. Turns speech parts into usable data. if it
+            doesn't find a color, it will run a regular set'''
+            for obl in verb.obl:
+                if obl.text in general_knowledge.Color.colors.keys():
+                    return self.setColor(obl.thing.get_color())
+            return self._set_action(verb)  # Run regular set if no color stated
+
+        def setColor(self, color):
+            print("Default AutomationSmartLightColor setColor function.")
+            print(f"color = {color}")
+            s = "Default AutomationSmartLightColor setColor function."
+            s += f" Color set to {color}."
+            return s

@@ -1,45 +1,37 @@
-import threading, time
-import spacy
-import englishActions.vbf as vbf
+try:
+    from . import understanding
+    from . import general_knowledge
+    from . import speech
+except ImportError:
+    import understanding
+    import general_knowledge
+    import speech
 
 services = {}
 plugin = {}
 core = None
 tts = None
-runThread = None
-threadActive = False
-conversing = True
-nlp = spacy.load("en_core_web_sm")
-name = "Holo"
+tts_say = None
+
 
 def _register_(serviceList, pluginProperties):
-    global services, plugin, core, tts
+    global services, plugin, core, tts, tts_say
     services = serviceList
     plugin = pluginProperties
     core = services["core"][0]
     tts = services["tts"][0]
-    services["userInterface"][0].addCommands({"converse": textConverse, "actions":{"converse": textConverse}})
-    #core.addStart(startThread)
-    #core.addClose(closeThread)
-    #core.addLoop(loopTask)
+    tts_say = tts.say
+    services["userInterface"][0].addCommands({
+        "converse": textConverse,
+        "actions": {
+            "converse": textConverse
+            }
+        })
+
 
 def loopTask():
     pass
 
-def startThread():
-    global runThread
-    threadActive = True
-    runThread = threading.Thread(target = threadScript)
-    runThread.start()
-
-def closeThread():
-    global runThread
-    threadActive = False
-    runThread.join()
-
-def threadScript():
-    global threadActive
-    threadActive = False
 
 def textConverse(arguments):
     """
@@ -49,100 +41,21 @@ INFO
 USAGE
     {0}
     """
-    global name
     conversing = True
     while conversing:
         t = input("USER:> ")
         if t:
-            process_text(t)
+            process_text(t, [print, tts_say])
         else:
             break
 
-def process_text(text):
+
+def process_text(text, replies=None):
     global tts, nlp
-    vbf._open()
-    
-    doc = nlp(text)
-    root = None
-
-    #identify main roots, or active ideas
-    
-    for token in doc:
-        if token.dep_ == u'ROOT':
-            root = token
-    roots = getConjuncts(root)
-
-    for token in roots:
-        processStatement(root, token, doc)
-    
-    vbf._close()
-
-def unknownVerb(root, nsubjects):
-    return ("sorry, I don't understand what " + root.text + " means")
-
-def processStatement(root, head, doc):
-    global name
-    #print(head.text)
-    #print(head.tag_)
-    #print(head.lemma_)
-    nsubjects = getDepAndConj(head, u'nsubj')
-    if nsubjects == ():
-        nsubjects = getDepAndConj(root, u'nsubj')
-    if nsubjects == ():
-        nsubjects = ((name,),)
-        #print("forced self")
-    nsubjectnames = []
-    for tup in nsubjects:
-        nsubjectnames.append([])
-        for item in tup:
-            if isinstance(item, str):
-                nsubjectnames[-1].append(item)
-            else:
-                if item.lemma_[0] != "-":
-                    nsubjectnames[-1].append(item.lemma_)
-                else:
-                    nsubjectnames[-1].append(item.text)
-    #print(nsubjectnames)
-    predicate = None
-    for chunk in doc.noun_chunks:
-        if chunk.root.dep_ == "pobj":
-            if chunk.root.text in vbf.mem.keys():
-                predicate = chunk.root
-    if predicate == None:
-        for chunk in doc.noun_chunks:
-            if chunk.root.dep_ == "dobj" or chunk.root.dep_ == "pobj":
-                if chunk.root.text in vbf.mem.keys():
-                    predicate = chunk.root
-    text = None
-    if predicate != None and predicate.text in vbf.mem.keys():
-        if getattr(vbf.mem[predicate.text], "call", None) != None:
-            text = vbf.mem[predicate.text].call(root, nsubjects)
-    if text == None:
-        text = vbf.vbz.get(root.lemma_, unknownVerb)(root, nsubjects)
-    if text == None:
-        text = "sorry, I didn't catch that."
-    print("ASSIST:> " + text)
-    tts.say(text)
-    
-    
-
-def getDependency(head, dependency):
-    matches = []
-    for token in head.children:
-        if token.dep_ == dependency:
-            matches.append(token)
-    return matches
-
-def getConjuncts(primary):
-    conjuncts = [primary]
-    conjuncts += getDependency(primary, u'conj')
-    return conjuncts
-
-def getDepAndConj(head, dependency):
-    '''Gets all dependencies and their conjuncts of a certain type'''
-    primaries = getDependency(head, dependency)
-    associations = []
-    for primary in primaries:
-        associations.append(tuple(getConjuncts(primary)))
-    return tuple(associations)
-    
+    if replies is None:
+        replies = [tts_say]
+    for response in speech.process_text(text):
+        if response is None:
+            response = "Ok."
+        for reply in replies:
+            reply(response)

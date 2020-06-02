@@ -1,3 +1,5 @@
+#!/usr/bin/python3.6
+
 #APPLES - Automatic Python Plugin Loading & Executing Script
 
 
@@ -48,7 +50,7 @@ def getLocRem(local, remote):
     local = replacePath(local)
     remoteFile = urllib.request.urlopen(remote)
     print(local)
-    with open(local, 'wb') as localFile:  
+    with open(local, 'wb') as localFile:
         localFile.write(remoteFile.read())
 
 APC_formats = ["0.0.0", "0.1.0"]
@@ -84,13 +86,13 @@ def loadAPC(filepath):
                             if not os.path.exists(filepath):
                                 os.makedirs(filepath)
                             getLocRem(pluginDep[0], pluginDep[1])
-                        
+
             if entry["type"].lower() == "collection":
                 if not os.path.isfile(replacePath(entry["local"])):
                     getLocRem(entry["local"], entry["remote"])
                 loadAPC(replacePath(entry["local"]))
-                    
-            
+
+
 
 def loadAPCs():
     for file in os.listdir(sys.path[0]):
@@ -99,8 +101,8 @@ def loadAPCs():
                 loadAPC(os.path.join(sys.path[0], file))
 
 loadAPCs()
-                
-        
+
+
 
 def loadAPM(file):
     '''
@@ -192,7 +194,7 @@ while unsorted:
     original = []
     for plugin in plugins:
         original.append(plugin["properties"]["name"])
-        
+
     for plugin in range(0,len(plugins)):
         for target in plugins[plugin]["order"]["after"]:
             if target["plugin"][0] == "$":
@@ -240,7 +242,7 @@ services["*"] = []
 for plugin in range(0,len(plugins)):
     services[plugins[plugin]["properties"]["service"]] = services.get(plugins[plugin]["properties"]["service"], []) + [modules[plugin]]
     services["*"].append([modules[plugin]])
-log("done!") 
+log("done!")
 
 
 

@@ -1,4 +1,4 @@
-import threading, time
+import threading, time, os
 from tkinter import Tk, Button, PhotoImage
 
 services = {}
@@ -22,7 +22,7 @@ def loopTask():
     pass
 
 def startThread():
-    global runThread
+    global runThread, threadActive
     threadActive = True
     runThread = threading.Thread(target = threadScript)
     runThread.start()
@@ -34,6 +34,7 @@ def closeThread():
 
 def threadScript():
     global threadActive, stt
+    # print(threadActive)
     root = Tk("OpenAssistant Trigger")
     root.overrideredirect(1)
     root.config(bg="#151515")
@@ -47,9 +48,10 @@ def threadScript():
     photo=PhotoImage(file="tkinterTrigger\logo.png")
     b.config(image=photo,width="200",height="200")
     b.pack()
-    root.mainloop()
+    if os.name == 'nt':
+        root.wm_attributes("-topmost", 1)
+    #root.mainloop()
     while threadActive:
         root.update()
     root.destroy()
     threadActive = False
-    

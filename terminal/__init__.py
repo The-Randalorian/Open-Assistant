@@ -1,4 +1,7 @@
-import threading, time, copy, os
+import threading
+# import time
+import copy
+import os
 
 services = {}
 plugin = {}
@@ -9,6 +12,7 @@ tickets = []
 commands = {}
 commandData = {}
 
+
 def _register_(serviceList, pluginProperties):
     global services, plugin, core
     services = serviceList
@@ -18,10 +22,24 @@ def _register_(serviceList, pluginProperties):
     core.addClose(closeThread)
     core.addLoop(loopTask)
 
-    addCommands({"help": assist, "assist": assist, "estop": eStop, "emergency": eStop, "terminal": {"help": assist, "assist": assist, "estop": eStop, "emergency": eStop}})
+    addCommands({
+        "help": assist,
+        "assist": assist,
+        "estop": eStop,
+        "emergency": eStop,
+        # "stop": stop,
+        "exit": stop,
+        "terminal": {
+            "help": assist,
+            "assist": assist,
+            "estop": eStop,
+            "emergency": eStop,
+            "stop": stop,
+            "exit": stop}})
 
-def loopTask():
-    global tickets, commands
+
+def process_tickets():
+    global tickets
     while len(tickets) > 0:
         if tickets[0][0][0].lower() == "m":
             print(tickets[0][1])
@@ -30,23 +48,29 @@ def loopTask():
         elif tickets[0][0][0].lower() == "r":
             print(tickets[0][1])
         del tickets[0]
-    rawCommand = input(">:").split(" ")
+
+
+def loopTask():
+    global commands
+    process_tickets()
+    rawCommand = input(">:").strip().split(" ")
     if len(rawCommand) > 0:
         if len(rawCommand[0]) != 0:
             quoted = False
             quotedCommand = []
             for section in range(0, len(rawCommand)):
                 if quoted:
-                    if rawCommand[section][-1] == '"':
-                        quoted = False
                     quotedCommand[-1] += " " + rawCommand[section]
                 else:
                     if rawCommand[section][0] == '"':
                         quoted = True
                     quotedCommand.append(rawCommand[section])
+                if rawCommand[section][-1] == '"':
+                    quoted = False
             rawCommand = quotedCommand
             for section in range(0, len(rawCommand)):
-                if rawCommand[section][0] == '"' and rawCommand[section][-1] == '"':
+                if rawCommand[section][0] == '"' \
+                        and rawCommand[section][-1] == '"':
                     rawCommand[section] = rawCommand[section][1:-1]
                 elif ("." in rawCommand[section] or section == 0):
                     rawCommand[section] = rawCommand[section].split(".")
@@ -60,28 +84,34 @@ def loopTask():
             else:
                 notFound(rawCommand)
 
+
 def startThread():
-    global runThread
+    global runThread, threadActive
     os.system('cls' if os.name == 'nt' else 'clear')
     threadActive = True
-    runThread = threading.Thread(target = threadScript)
+    runThread = threading.Thread(target=threadScript)
     runThread.start()
 
+
 def closeThread():
-    global runThread
+    global runThread, threadActive
     threadActive = False
     runThread.join()
+
 
 def threadScript():
     global threadActive
     threadActive = False
 
+
 def addTicket(action, message, **kwargs):
     tickets.append([action, message, kwargs])
+
 
 def addCommands(structure):
     commands.update(structure)
     addCommandData(structure)
+
 
 def addCommandData(structure, root=""):
     for alias, action in structure.items():
@@ -89,12 +119,15 @@ def addCommandData(structure, root=""):
             if action in commandData.keys():
                 commandData[action]["aliases"].append(root + alias)
             else:
-                commandData[action] = {"aliases":[root + alias]}
+                commandData[action] = {"aliases": [root + alias]}
         else:
             addCommandData(action, alias + ".")
 
+
 def notFound(arguments):
-    print("Command '" + ".".join(arguments[0]) + "' could not be found. Type help -L for a list of commands.")
+    print("Command '" + ".".join(arguments[0]) + "' could not be found. Type \
+help -L for a list of commands.")
+
 
 def assist(arguments):
     """
@@ -138,7 +171,9 @@ USAGE
         else:
             print("could not find command.")
     else:
-        print("command not specified. Type 'help help' for more info or 'help -L' for a list of commands.")
+        print("command not specified. Type 'help help' for more info or 'help \
+-L' for a list of commands.")
+
 
 def printCommands(coms, head=""):
     for command in coms.keys():
@@ -146,6 +181,7 @@ def printCommands(coms, head=""):
             printCommands(coms[command], head + command + ".")
         else:
             print(head + command)
+
 
 def eStop(arguments):
     """
@@ -156,3 +192,14 @@ USAGE
     {0}
     """
     core.eStop()
+
+
+def stop(arguments):
+    """
+INFO
+    Triggers a regular stop. This will close the entire program.
+
+USAGE
+    {0}
+    """
+    core.stop()

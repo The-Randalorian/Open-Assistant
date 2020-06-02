@@ -1,1 +1,0 @@
-Run the above two files by double clicking them. This will enable Cortana as a tts voice on windows machines. Make sure you have admin privledges.

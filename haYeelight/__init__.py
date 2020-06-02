@@ -1,5 +1,6 @@
 import threading, time
 import yeelight
+import json
 
 services = {}
 plugin = {}
@@ -8,52 +9,64 @@ core = None
 runThread = None
 threadActive = False
 
-bulbs = []
+lights = []
+light_data = []
 
 def _register_(serviceList, pluginProperties):
-    global services, plugin, core, ha
-    global YeelightSmartBulb
+    global services, plugin, core, ha, lights, light_data
+    global YeelightSmartLight
     services = serviceList
     plugin = pluginProperties
     core = services["core"][0]
     actions = services["actions"][0]
-    vbf = actions.vbf
+    #understanding = actions.understanding
     ha = services["homeAutomation"][0]
 
-    class YeelightSmartBulb(ha.AutomationSmartBulb):
-        def __init__(self, ip, a={}):
-            global bulbs
-            super().__init__(a)
+    class YeelightSmartLight(ha.AutomationSmartLightColor):
+        def __init__(self, ip, new_light=True, **kwargs):
+            global lights
+            super().__init__(**kwargs)
             self.ip = ip
-            self.setCommand(["set", "color"], self.setColor)
-            self.bulb = len(bulbs)
-            bulbs.append(yeelight.Bulb(self.ip))
-            bulbs[self.bulb].auto_on = True
+            self.light = len(lights)
+            lights.append(yeelight.Bulb(self.ip))
+            lights[self.light].auto_on = True
+            if new_light:
+                light_data.append({"ip": self.ip, "name": self.name})
+            with open(__file__[:-11] + "lights.json", "w") as f:
+                json.dump(light_data, f)
 
-        def turnOn(self, root, *args, **kwargs):
-            global bulbs
-            bulbs[self.bulb].turn_on()
+        def toggleOn(self):
+            global lights
+            lights[self.light].turn_on()
             return "Okay"
 
-        def turnOff(self, root, *args, **kwargs):
-            global bulbs
-            bulbs[self.bulb].turn_off()
+        def toggleOff(self):
+            global lights
+            lights[self.light].turn_off()
             return "Okay"
 
-        def setColor(self, root, *args, **kwargs):
-            global bulbs
-            col = super().setColor(root, raw = True)
-            bulbs[self.bulb].set_rgb(col[0], col[1], col[2])
+        def setColor(self, color):
+            global lights
+            col = [int(b*255) for b in color]  # super().setColor(root, raw = True)
+            lights[self.light].set_rgb(col[0], col[1], col[2])
             return "Okay"
 
-    #vbf.mem["lights"] = YeelightSmartBulb("")
-    #bulbData = yeelight.discover_bulbs()
-    #for i in range(len(bulbData)):
-        #vbf.mem["yeelightbulb"+str(i)] = YeelightSmartBulb(bulbData[i]["ip"])
+    #vbf.mem["lights"] = YeelightSmartLight("")
+    #lightData = yeelight.discover_lights()
+    #for i in range(len(lightData)):
+        #vbf.mem["yeelightlight"+str(i)] = YeelightSmartLight(lightData[i]["ip"])
     #print(vbf.mem)
     #core.addStart(startThread)
     #core.addClose(closeThread)
     #core.addLoop(loopTask)
+
+    try:
+        with open(__file__[:-11] + "lights.json", "r") as f:
+            light_data = json.load(f)
+        for ld in light_data:
+            YeelightSmartLight(ld["ip"], new_light=False, name=ld["name"])
+    except FileNotFoundError:
+        pass
 
     services["userInterface"][0].addCommands({"yeelight":{"connect": textConnect}})
 
@@ -83,24 +96,21 @@ INFO
 USAGE
     {0}
     """
-    print("Discovering Bulbs")
-    bulbData = yeelight.discover_bulbs()
-    if len(bulbData) > 0:
-        for i in range(len(bulbData)):
+    print("Discovering Lights")
+    lightData = yeelight.discover_bulbs()
+    if len(lightData) > 0:
+        for i in range(len(lightData)):
             print(str(i + 1) + ". ", end="")
-            if bulbData[i]["capabilities"]["name"] == "":
-                print("Unnamed Bulb")
+            if lightData[i]["capabilities"]["name"] == "":
+                print("Unnamed Light")
             else:
-                print(bulbData[i]["capabilities"]["name"])
+                print(lightData[i]["capabilities"]["name"])
         try:
-            n = int(input("enter a bulb number to connect to. ")) - 1
+            n = int(input("enter a light number to connect to. ")) - 1
             name = input("what would you like to call it. (recommended: lights) ").lower()
-            if n < len(bulbData):
-                services["actions"][0].vbf._open()
-                services["actions"][0].vbf.mem[name] = YeelightSmartBulb(bulbData[i]["ip"])
-                services["actions"][0].vbf._close()
+            if n < len(lightData):
+                YeelightSmartLight(lightData[i]["ip"], name=name)
         except ValueError as e:
             print("invalid input")
     else:
-        print("No bulbs detected! Make sure they are on and connected to the same network.")
-    
+        print("No lights detected! Make sure they are on and connected to the same network.")

@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/env python3
 
 #APPLES - Automatic Python Plugin Loading & Executing Script
 

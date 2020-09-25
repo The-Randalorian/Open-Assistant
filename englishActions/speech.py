@@ -1,11 +1,29 @@
+#!/usr/bin/env python3
+'''
+The purpose of speech.py is to begin to interpret sentences into what is
+intended. It's goal IS NOT to directly figure out EXACTLY what needs to
+happen, but is instead to figure out "what needs to do what". It then
+grabs Thing instances and then passes it off to their Actions for further
+processing and intent comprehension.
+
+This is primarily done through the Stanza library, which unpacks sentences
+into parts of speech, relationships and other information. This library makes
+some frequent (but understandable, see later comment near bandaids) mistakes
+that need to be fixed before handling by actions. These are handled by the
+bandaid functions also included here.
+'''
+import itertools
+
 import stanza
 
 try:
-    from .understanding import Thing
+    from . import understanding
     from . import general_knowledge
+    from . import thesaurus
 except ImportError:
-    from understanding import Thing
+    import understanding
     import general_knowledge
+    import thesaurus
 
 read_all_and_print = (__name__ == "__main__")
 stanza_package = 'default'
@@ -34,25 +52,29 @@ class Word:
 class Noun(Word):
     def __init__(self, **kwargs):
         t = kwargs.get("text")
-        self.thing = kwargs.pop("thing", Thing.get_by_name(name=t))
+        self.thing = kwargs.pop("thing", understanding.Thing.get_by_name(name=t))
         self.cases = kwargs.pop("cases", [])
         self.nummods = kwargs.pop("nummods", [])
         super().__init__(**kwargs)
 
     @classmethod
-    def get_by_name(cls, name, **kwargs):
-        return cls(thing=Thing.get_by_name(name), text=name, **kwargs)
+    def get_by_name(cls, name, called=None, **kwargs):
+        t = understanding.Thing.get_by_name(name)
+        if called is not None:
+            t.called = getattr(t, "called", called)
+        return cls(thing=t, text=name, **kwargs)
 
     @classmethod
     def get_from_stanza(cls, sentence, word, **kwargs):
         case_words = get_dep_and_conj_flat(sentence, word, "case")
-        cases = [Word(text=i.lemma) for i in case_words]
+        cases = [Word(text=i.lemma.lower()) for i in case_words]
         nummod_words = get_dep_and_conj_flat(sentence, word, "nummod")
-        nummods = [Word(text=i.lemma) for i in nummod_words]
+        nummods = [Word(text=i.lemma.lower()) for i in nummod_words]
         return cls.get_by_name(
-            name=word.text,
+            name=word.lemma.lower(),
             cases=cases,
-            nummods=nummods
+            nummods=nummods,
+            called=word.text.lower()
             )
 
     def __str__(self):
@@ -72,7 +94,7 @@ system_noun = Noun.get_by_name("holo")
 
 
 class Verb(Word):
-    base_subj = system_noun
+    base_subjs = [system_noun]
 
     def __init__(self, **kwargs):
         self.subj = kwargs.pop("subj", [system_noun])
@@ -88,7 +110,7 @@ class Verb(Word):
     def get_from_stanza(cls, sentence, word, **kwargs):
         subjects = list(get_dep_and_conj_flat(sentence, word, "nsubj"))
         if len(subjects) <= 0:
-            nsubjs = [cls.base_subj]
+            nsubjs = cls.base_subjs
         else:
             nsubjs = []
             for ob in subjects:
@@ -138,14 +160,53 @@ class Verb(Word):
 def print_process_text(text, reprint=True):
     if reprint:
         print(": " + text)
+    last_was_ok = False
     for response in process_text(text):
+        if response.lower().strip() == "ok.":
+            last_was_ok = True
+            continue
         if response is not None:
+            if last_was_ok:
+                print(">>", "ok.")
             print(">>", response)
+        last_was_ok = False
+    if last_was_ok:
+        print(">>", "ok.")
+
+def run_root(sentence, root, default_subjects=[system_noun]):
+    subjects = list(get_dep_and_conj_flat(sentence, root, "nsubj"))
+    if len(subjects) <= 0:
+        nsubjs = list(default_subjects)
+    else:
+        nsubjs = []
+        for ob in subjects:
+            nsubjs.append(Noun.get_from_stanza(sentence, ob))
+    Verb.base_subjs = nsubjs
+    for root_verb in get_conjuncts(sentence, root):
+        v = Verb.get_from_stanza(sentence, root_verb)
+        for bandaid in post_bandaids:
+            bandaid(sentence, v)
+        if read_all_and_print:
+            print(v)
+        for subj in v.subj:
+            yield subj.thing.perform_action(v)
+
+
+def ask_is_one(sentence, root):
+    nsubjs = get_dep_and_conj_flat(sentence, root, "nsubj")
+    nsubjs = [Noun.get_from_stanza(sentence, nsubj) for nsubj in nsubjs]
+    for classification in get_conjuncts(sentence, root):
+        class_noun = Noun.get_from_stanza(sentence, classification)
+        for nsubj in nsubjs:
+            yield class_noun.thing.ask_is_one(nsubj.thing)
 
 
 def process_text(text):
+    text = text.strip().lower()
+    print(repr(text))
     doc = nlp(text)
     root = None
+    Verb.base_subjs = [system_noun]
 
     for sentence in doc.sentences:
         for token in sentence.words:
@@ -158,21 +219,7 @@ def process_text(text):
             if token.deprel == "root":
                 root = token
                 if token.upos == "VERB":
-                    base_subj = get_dep_and_conj_flat(sentence, root, "nsubj")
-                    if base_subj == ():
-                        base_subj = [system_noun]
-                    Noun.base_subj = base_subj
-                    for root_verb in get_conjuncts(sentence, root):
-                        v = Verb.get_from_stanza(sentence, root_verb)
-                        for bandaid in bandaids:
-                            bandaid(sentence, v)
-                        if read_all_and_print:
-                            print(v)
-                        for subj in v.subj:
-                            yield subj.thing.perform_action(v)
-
-                    if not read_all_and_print:
-                        break
+                    yield from run_root(sentence, root)
                 elif token.upos == "INTJ":
                     base_subj = get_dep_and_conj_flat(sentence, root, "nsubj")
                     if base_subj == ():
@@ -180,9 +227,37 @@ def process_text(text):
                             sentence, root, "vocative")
                     if base_subj == ():
                         base_subj = [system_noun]
-                    Noun.base_subj = base_subj
+                    Verb.base_subjs = [base_subj]
                     if root.lemma in ("hello", "hi", "hey"):  # and base_subj == [system_noun]:
                         yield "Hello!"
+                elif token.upos == "NOUN":
+                    for root in get_conjuncts(sentence, root):
+                        base_subj = list(get_dep_and_conj_flat(sentence, root, "nsubj"))
+                        determiners = get_dep_and_conj_flat(sentence, root, "det")
+                        asking = False
+                        for copula in get_dep_and_conj_flat(sentence, root, "cop"):
+                            if copula.id < base_subj[0].id:
+                                yield from ask_is_one(sentence, root)
+                                asking = True
+                        if asking:
+                            continue
+                        for punct in get_dep_and_conj_flat(sentence, root, "punct"):
+                            if punct.lemma == "?":
+                                yield from ask_is_one(sentence, root)
+                                asking = True
+                        if asking:
+                            continue
+                        base_subj = [Noun.get_from_stanza(sentence, nsubj) for nsubj in base_subj]
+                        for determiner in determiners:
+                            if determiner.lemma in ("a", "an"):
+                                for subj in base_subj:
+                                    yield subj.thing.classify(root.lemma)
+                        for clause in itertools.chain(
+                                get_dep_and_conj_flat(sentence, root, "acl"),
+                                get_dep_and_conj_flat(sentence, root, "acl:relcl")):
+                            if clause.upos == "VERB":
+                                yield from run_root(sentence, clause, default_subjects=base_subj)
+
 
 
 def get_conjuncts(sentence, primary):
@@ -252,7 +327,7 @@ def bandaid_turn_on_weird(sentence, verb):
                 verb.advmod.append(word.lemma)
 
 
-bandaids = [
+post_bandaids = [
     bandaid_turn_on_obl,
     bandaid_turn_on_nmod,
     bandaid_turn_on_weird
@@ -260,8 +335,21 @@ bandaids = [
 
 # Run this file to unpack sentences for development.
 if __name__ == "__main__":
-    read_all_and_print = True
-    # print_process_text("Holo turn the lights on.")
+    import time
+    read_all_and_print = False
+    # These test cases are run automatically to demonstrate and test text unpacking.
+    _test_cases = '''i like cake, pie and math but i hate cereal. i love books and movies. do i like cake, pie, cereal, markers, movies, and pens?
+                     john is a person. john loves anime and manga. john hates people, music and cleaning. does john dislike anime, cleaning, you and me?
+                     don is a guy who likes anime. does don love anime and movies?
+                     hannah is a girl who loves books and art. does she hate movies and books?
+                     jake is a person who loves anime and hates me. does he love me and anime?
+                     amanda is a girl who loves books. harold is a guy who hates homework. does amanda hate books and does harold love homework?
+                     susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?'''
+    if False:  # Change this line to disable the built in test case checking.
+        for line in _test_cases.splitlines(False):
+            print("=" * 60)
+            print_process_text(line.strip())
+            time.sleep(1)
     while True:
         print("="*60)
         t = input("\n: ")

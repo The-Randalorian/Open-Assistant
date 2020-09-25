@@ -117,6 +117,9 @@ dmypy.json
 *.mem
 *.oam
 
+#JetBrains PyCharm Settings
+.idea/
+
 /englishSTT/model/
 /englishSTT/deepspeech-0.5.0-models/
 /englishSTT/deepspeech-0.6.0-models/

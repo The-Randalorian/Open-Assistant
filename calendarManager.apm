@@ -1,0 +1,14 @@
+[properties]
+name = calendarManager
+version = 0.1.0
+service = calendar
+exclusive = no
+
+[order]
+before = []
+after = [{"plugin":"$core", "priority":0}]
+
+[updates]
+remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
+localroot = _APPLES_/
+files = [["calendarManager.apm", "calendarManager.apm"], ["calendarManager/__init__.py", "calendarManager/__init__.py"]]

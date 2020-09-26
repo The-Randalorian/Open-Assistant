@@ -2,7 +2,7 @@
 
 # APPLES - Automatic Python Plugin Loading & Executing Script
 
-# Version 0.1.3
+# Version 0.1.4
 
 
 # =============================================================================
@@ -88,15 +88,16 @@ def loadAPC(filepath):
                                     os.makedirs(filepath)
                                 getLocRem(pluginDep[0], pluginDep[1])
                     elif format == "0.1.0":
-                        for pluginDep in json.loads(plugin["updates"]["files"]):
-                            pluginDep = plugin["updates"]["localroot"] + pluginDep
-                            pluginDep = replacePath(pluginDep)
-                            if not os.path.isfile(pluginDep):
-                                pluginDep = plugin["updates"]["remoteroot"] + pluginDep
-                                filepath = pluginDep.rsplit("/", 1)
+                        for file_name in json.loads(plugin["updates"]["files"]):
+                            pluginDep = [None, None]
+                            pluginDep[0] = plugin["updates"]["localroot"] + file_name
+                            pluginDep[0] = replacePath(pluginDep[0])
+                            if not os.path.isfile(pluginDep[0]):
+                                pluginDep[1] = plugin["updates"]["remoteroot"] + file_name
+                                filepath = pluginDep[0].rsplit("/", 1)[0]
                                 if not os.path.exists(filepath):
                                     os.makedirs(filepath)
-                                getLocRem(pluginDep, pluginDep)
+                                getLocRem(pluginDep[0], pluginDep[1])
 
             if entry["type"].lower() == "collection":
                 if not os.path.isfile(replacePath(entry["local"])):

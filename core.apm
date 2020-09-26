@@ -10,6 +10,7 @@ before = []
 after = []
 
 [updates]
+format = 0.1.0
 remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
 localroot = _APPLES_/
-files = [["core.apm", "core.apm"], ["core/__init__.py", "core/__init__.py"]]
+files = ["core.apm", "core/__init__.py"]

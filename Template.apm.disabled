@@ -9,6 +9,7 @@ before = []
 after = [{"plugin":"$core", "priority":0}]
 
 [updates]
+format = 0.1.0
 remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
 localroot = _APPLES_/
-files = [["terminal.apm", "terminal.apm"], ["terminal/__init__.py", "terminal/__init__.py"]]
+files = ["template.apm", "template/__init__.py"]

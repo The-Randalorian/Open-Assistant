@@ -1,7 +1,7 @@
 # Open Assistant
 Open Assistant is an open-source voice assistant written in python. It's designed to be easily modified and has support for plugins with additional features. This allows developers and manufactures to add custom support for their hardware easily.
 
-Internally, Open Assistant is designed to unpack, process and understand sentences, instead of simply listening for keywords. This allows it to understand a greater variety of sentences, from simple requests "turn on the lights" to complicated sentences like "John's a guy who loves anime and computers, but I hate people".
+Internally, Open Assistant is designed to unpack, process and understand sentences, instead of simply listening for keywords. This allows it to understand a greater variety of sentences, from simple requests "turn on the lights" to complicated sentences like "John's a guy who loves anime and computers, but I hate people". This improves user experience by allowing complicated actions to be performed, like "turn on the lights and the fan" or "remind me to buy milk when I go to the store", requests that don't work as intended on most voice assistants.
 
 ## Installation
 Install the required packages (see below) then download `apples.py` and `open_assistant_en_us.apc` from here. Run apples.py and it will download every required plugin automatically. Everything 'should' automatically update as well. Currently, a few smart home devices are supported, and must be installed separately. To install them, copy the specified file to the APPLES directory on your local machine and run the command specified to install necessary addons.
@@ -33,7 +33,7 @@ You will then have to install pyaudio manually. First download it from [here](ht
 ```
 python -m pip install <downloaded file path>
 ```
-Python 3.8 is the most recent tested version at time of writing. Any later versions may or may not work.
+Python 3.8.0 is the most recent tested version at time of writing. Any later versions may or may not work.
 
 ## Usage
 Press the trigger button or type `trigger` in the terminal to make the system listen for your speech. (CURRENTLY VERY BUGGY)

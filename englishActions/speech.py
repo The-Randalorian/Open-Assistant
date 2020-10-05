@@ -13,6 +13,8 @@ that need to be fixed before handling by actions. These are handled by the
 bandaid functions also included here.
 '''
 import itertools
+import hashlib
+import re
 
 import stanza
 
@@ -20,6 +22,7 @@ try:
     from . import understanding
     from . import general_knowledge
     from . import thesaurus
+    import core
 except ImportError:
     import understanding
     import general_knowledge
@@ -35,6 +38,32 @@ except FileNotFoundError:
     stanza.download('en', package=stanza_package)
     nlp = stanza.Pipeline('en', package=stanza_package)
 
+# Easter egg/Failsafe against rogue AI
+al_para_regex = re.compile('[^a-z]')
+al_paras = {
+    '572295c965377c5f73b6aeb5f7dbf6c8383cc2c6c2aaf4f5889bdefe7d32e26905b88c9e6e12a66b4d644a3ca27ca88df1a2541e0c28a515c3432a357550a380',
+    'f13c207045bb82fac768f1536c3565d34883435acac89645992dfa4775be9285cdd7ac62ad8a5cd744f4617d5bffb88764dd37463b03fee48c9b34e6fa844353',
+    '9f4ecffb7d1f04514c687040d607d03a2f9803f9da367b7e7b73480a65138e19ca63ba297d4d3d612dd9c90d8ff6a5fe9246c0d1d3dec73bc7c08809d3ec557e'
+}
+
+
+def get_hash(s):
+    #Clean up input text. This makes any text lowercase with no special characters. It can be considered unimportant.
+    s = s.lower()
+    s = al_para_regex.sub('', s)
+    #Create a SHA3-512 hash of the cleaned text. Return that.
+    hasher = hashlib.sha3_512()
+    hasher.update(s.encode("utf_16_le"))
+    return hasher.hexdigest()
+
+
+def check_hash(s):
+    #Get a SHA3-512 hash of the input text.
+    s_hash = get_hash(s)
+    # Check if the hash matches any of the hashes in al_paras
+    if s_hash in al_paras:
+        print("Statement not able to be parsed.")
+        core.eStop()
 
 class Word:
     def __init__(self, **kwargs):
@@ -55,6 +84,7 @@ class Noun(Word):
         self.thing = kwargs.pop("thing", understanding.Thing.get_by_name(name=t))
         self.cases = kwargs.pop("cases", [])
         self.nummods = kwargs.pop("nummods", [])
+        self.amods = kwargs.pop("amods", [])
         super().__init__(**kwargs)
 
     @classmethod
@@ -70,10 +100,13 @@ class Noun(Word):
         cases = [Word(text=i.lemma.lower()) for i in case_words]
         nummod_words = get_dep_and_conj_flat(sentence, word, "nummod")
         nummods = [Word(text=i.lemma.lower()) for i in nummod_words]
+        amod_words = get_dep_and_conj_flat(sentence, word, "amod")
+        amods = [Word(text=i.lemma.lower()) for i in amod_words]
         return cls.get_by_name(
             name=word.lemma.lower(),
             cases=cases,
             nummods=nummods,
+            amods=amods,
             called=word.text.lower()
             )
 
@@ -81,12 +114,14 @@ class Noun(Word):
         s = f"{self.text}"
         s += f"\n    - cases: {self.cases}"
         s += f"\n    - nummods: {self.nummods}"
+        s += f"\n    - amods: {self.amods}"
         return s
 
     def __repr__(self):
         s = f"\n        {self.text}"
         s += f"\n            - cases: {self.cases}"
         s += f"\n            - nummods: {self.nummods}"
+        s += f"\n            - amods: {self.amods}"
         return s + "\n        "
 
 
@@ -203,7 +238,10 @@ def ask_is_one(sentence, root):
 
 def process_text(text):
     text = text.strip().lower()
-    print(repr(text))
+    if text == '':
+        yield ''
+        return
+    check_hash(text)
     doc = nlp(text)
     root = None
     Verb.base_subjs = [system_noun]
@@ -342,14 +380,15 @@ if __name__ == "__main__":
                      john is a person. john loves anime and manga. john hates people, music and cleaning. does john dislike anime, cleaning, you and me?
                      don is a guy who likes anime. does don love anime and movies?
                      hannah is a girl who loves books and art. does she hate movies and books?
-                     jake is a person who loves anime and hates me. does he love me and anime?
+                     jake is a person who loves anime and hates me. does he dislike anime and me?
                      amanda is a girl who loves books. harold is a guy who hates homework. does amanda hate books and does harold love homework?
-                     susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?'''
-    if False:  # Change this line to disable the built in test case checking.
+                     susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?
+                     '''
+    if True:  # Change this line to enable/disable the built in test case checking.
         for line in _test_cases.splitlines(False):
             print("=" * 60)
             print_process_text(line.strip())
-            time.sleep(1)
+            time.sleep(0.5)  # Some terminals (PyCharm) have issues with text moving too fast.
     while True:
         print("="*60)
         t = input("\n: ")

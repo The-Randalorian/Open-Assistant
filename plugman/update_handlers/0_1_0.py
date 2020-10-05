@@ -57,10 +57,18 @@ Loads and processes APM files into usable forms
 def check_for_new_manifest(plugin):
     for file_name in plugin["updates"]["files"]:
         if file_name.split(".")[-1] == "apm":
-            with urllib.request.urlopen(get_remote_url(plugin, file_name)) as remote_manifest:
-                remote_plugin = loadAPM(remote_manifest)
-                if remote_plugin["properties"]["version"] != plugin["properties"]["version"]:
-                    return True, remote_plugin
+            try:
+                with urllib.request.urlopen(get_remote_url(plugin, file_name)) as remote_manifest:
+                    remote_plugin = loadAPM(remote_manifest)
+                    for r_digit, l_digit in zip(remote_plugin["properties"]["version"].split("."), plugin["properties"]["version"].split(".")):
+
+                        if int(r_digit) < int(l_digit):
+                            break
+                        elif int(r_digit) > int(l_digit):
+                        #if remote_plugin["properties"]["version"] != plugin["properties"]["version"]:
+                            return True, remote_plugin
+            except urllib.error.HTTPError as e:
+                print("Error", e.code, e.reason)
     return False, plugin
 
 
@@ -84,24 +92,21 @@ def download(plugin):
         remotes.append(get_remote_url(plugin, file_name))
         locals.append(get_local_url(plugin, file_name))
 
-    print(remotes, locals)
-
     for local, remote in zip(locals, remotes):
-        print(local, remote)
-        urllib.request.urlretrieve(remote, local)
+        try:
+            urllib.request.urlretrieve(remote, local)
+        except urllib.error.HTTPError as e:
+            print("Error", e.code, e.reason)
 
 
 def verify(plugin):
     for file_name in plugin["updates"]["files"]:
         local = get_local_url(plugin, file_name)
-        print(local)
         if not os.path.isfile(local):
             return False
     return True
 
 def update_plugin(plugin):
-    print(plugin)
     updated, plugin = check_for_new_manifest(plugin)
-    print(plugin)
     if updated or not verify(plugin):
         download(plugin)

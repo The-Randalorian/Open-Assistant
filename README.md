@@ -1,7 +1,7 @@
 # Open Assistant
 Open Assistant is an open-source voice assistant written in python. It's designed to be easily modified and has support for plugins with additional features. This allows developers and manufactures to add custom support for their hardware easily.
 
-Internally, Open Assistant is designed to unpack, process and understand sentences, instead of simply listening for keywords. This allows it to understand a greater variety of sentences, from simple requests "turn on the lights" to complicated sentences like "John's a guy who loves anime and computers, but I hate people". This improves user experience by allowing complicated actions to be performed, like "turn on the lights and the fan" or "remind me to buy milk when I go to the store", requests that don't work as intended on most voice assistants.
+Internally, Open Assistant is designed to unpack, process and understand sentences, instead of simply listening for keywords. This allows it to understand a greater variety of sentences, from simple requests "turn on the lights" to complicated sentences like "John's a guy who loves anime and computers, but hates people". This improves user experience by allowing complicated actions to be performed, like "turn on the lights and the fan" or "remind me to buy milk when I go to the store", requests that don't work as intended on most voice assistants. Because of this, this documentation and others will sometimes refer to open assistant as an "understanding based" voice assistant; it's designed to have some semblance of comprehension.
 
 ## Installation
 Install the required packages (see below) then download `apples.py` and `open_assistant_en_us.apc` from here. Run apples.py and it will download every required plugin automatically. Everything 'should' automatically update as well. Currently, a few smart home devices are supported, and must be installed separately. To install them, copy the specified file to the APPLES directory on your local machine and run the command specified to install necessary addons.
@@ -68,6 +68,11 @@ The STT plugin's job is turning the raw audio data into usable text. It also lis
 
 ### Actions
 The Actions plugin is the core of what makes Open Assistant different. The Actions plugin stores an internal list of "Things" which the assistant is capable of understanding. When unpacking a sentence, it aims to understand "what action is being done to what by what". This differs from the traditional keyword approach that just looks for keywords and guesses about what is intended. This allows complicated behaviors to develop from complicated sentences and makes the assistant feel less like a voice activated form filler.
+
+The use of the word "Things" above is quite literal. The assistant remembers what things are by having an internal list of instances of the "Thing" class, or more commonly, its subclasses such as "Person", "Date", "Color", etc. It attaches information to these Thing instances by creating or using additional thing instances as appropriate. For example, the sentence "Eve is a girl who likes red." will:
+1. Create a Thing called "Eve".
+2. Cast the Eve Thing into a Person instance (girl is an alias of Person, which calls a special constructor to assign Eve's gender).
+3. Add the Color instance named "red" to the list of objects Eve likes.
 
 ### Text to Speech (TTS)
 The Text to Speech plugin finishes handling the request by generating the audio to be heard by the user. In the future, these plugins will be able to either directly play back the audio or send it off to another plugin, allowing for a separate playback plugin. No separate playback plugin has been created as of yet though, so currently the plugin must handle playback internally. The option will stay to allow for the use of internal text to speech systems that can't give raw audio, like screen readers.

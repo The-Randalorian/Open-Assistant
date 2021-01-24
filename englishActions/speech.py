@@ -12,9 +12,7 @@ some frequent (but understandable, see later comment near bandaids) mistakes
 that need to be fixed before handling by actions. These are handled by the
 bandaid functions also included here.
 '''
-import itertools
-import hashlib
-import re
+import itertools, hashlib, re, logging
 
 import stanza
 
@@ -22,11 +20,15 @@ try:
     from . import understanding
     from . import general_knowledge
     from . import thesaurus
+    from . import packaging
     import core
 except ImportError:
     import understanding
     import general_knowledge
     import thesaurus
+    import packaging
+    
+_logger = logging.getLogger("apples.englishActions." + __name__)
 
 read_all_and_print = (__name__ == "__main__")
 stanza_package = 'default'
@@ -63,6 +65,7 @@ def check_hash(s):
     # Check if the hash matches any of the hashes in al_paras
     if s_hash in al_paras:
         print("Statement not able to be parsed.")
+        _logger.critical("Statement not able to be parsed.")
         core.eStop()
 
 class Word:
@@ -91,7 +94,7 @@ class Noun(Word):
     def get_by_name(cls, name, called=None, **kwargs):
         t = understanding.Thing.get_by_name(name)
         if called is not None:
-            t.called = getattr(t, "called", called)
+            t.objective = getattr(t, "objective", called)
         return cls(thing=t, text=name, **kwargs)
 
     @classmethod
@@ -208,7 +211,10 @@ def print_process_text(text, reprint=True):
     if last_was_ok:
         print(">>", "ok.")
 
-def run_root(sentence, root, default_subjects=[system_noun]):
+
+def run_root(sentence, root, default_subjects=None):
+    if not default_subjects:
+        default_subjects = [system_noun]
     subjects = list(get_dep_and_conj_flat(sentence, root, "nsubj"))
     if len(subjects) <= 0:
         nsubjs = list(default_subjects)
@@ -221,8 +227,7 @@ def run_root(sentence, root, default_subjects=[system_noun]):
         v = Verb.get_from_stanza(sentence, root_verb)
         for bandaid in post_bandaids:
             bandaid(sentence, v)
-        if read_all_and_print:
-            print(v)
+        _logger.debug("Processing Verb %s:\n%s", v.text, v)
         for subj in v.subj:
             yield subj.thing.perform_action(v)
 
@@ -233,7 +238,10 @@ def ask_is_one(sentence, root):
     for classification in get_conjuncts(sentence, root):
         class_noun = Noun.get_from_stanza(sentence, classification)
         for nsubj in nsubjs:
-            yield class_noun.thing.ask_is_one(nsubj.thing)
+            try:
+                yield class_noun.thing.ask_is_one(nsubj.thing)
+            except:
+                yield "Failed."
 
 
 def process_text(text):
@@ -248,6 +256,12 @@ def process_text(text):
 
     for sentence in doc.sentences:
         for token in sentence.words:
+            _logger.debug("%s %s %s %s %s",
+                          token.id,
+                          token.lemma,
+                          token.deprel,
+                          token.upos,
+                          token.head)
             if read_all_and_print:
                 print(token.id,
                       token.lemma,
@@ -295,6 +309,13 @@ def process_text(text):
                                 get_dep_and_conj_flat(sentence, root, "acl:relcl")):
                             if clause.upos == "VERB":
                                 yield from run_root(sentence, clause, default_subjects=base_subj)
+        try:
+            packaging.push()
+        except Exception as e:
+            if packaging.get_thing_storage() is None:
+                pass
+            else:
+                raise e
 
 
 
@@ -374,24 +395,57 @@ post_bandaids = [
 # Run this file to unpack sentences for development.
 if __name__ == "__main__":
     import time
+
+    logging.basicConfig(level=logging.DEBUG)
     read_all_and_print = False
+
+    print("\n" + "=" * 60 + "\n")
+    print("Open Assistant English Actions Plugin Test")
+    print("\n" + "=" * 60 + "\n")
+
+
+    print("Testing object serialization")
+    data = packaging.dump(understanding.Thing.get_by_name("holo").get_ref())
+    print(len(data))
+    print(data.hex())
+    print("\n" + "=" * 60 + "\n")
+
+    print("Testing object deserialization")
+    data = packaging.load(data)
+    print(data, data.opinions_list)
+    print("\n" + "-" * 60)
+    print_process_text("do you like apples?")
+    print("\n" + "=" * 60 + "\n")
+
+    #holo = understanding.Thing.get_by_name("holo").get_ref()
+
+    #packaging.thing_storage.put(holo)
+    #print(">>>>", packaging.thing_storage.get("holo"))
+
+    #understanding.Thing.get_by_name("holo").get_ref()
+
+    #exit()
+
+    print("Testing sentence handling")
     # These test cases are run automatically to demonstrate and test text unpacking.
-    _test_cases = '''i like cake, pie and math but i hate cereal. i love books and movies. do i like cake, pie, cereal, markers, movies, and pens?
-                     john is a person. john loves anime and manga. john hates people, music and cleaning. does john dislike anime, cleaning, you and me?
-                     don is a guy who likes anime. does don love anime and movies?
-                     hannah is a girl who loves books and art. does she hate movies and books?
-                     jake is a person who loves anime and hates me. does he dislike anime and me?
-                     amanda is a girl who loves books. harold is a guy who hates homework. does amanda hate books and does harold love homework?
-                     susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?
-                     '''
+    _test_cases = '''
+        i like cake, pie and math but i hate cereal. i love books and movies. do i like cake, pie, cereal, markers, movies, and pens?
+        john is a person. john loves anime and manga. john hates people, music and cleaning. does john dislike anime, cleaning, you and me?
+        don is a guy who likes anime. does don love anime and movies?
+        hannah is a girl who loves books and art. does she hate movies and books?
+        jake is a person who loves anime and hates me. does he dislike anime and me?
+        amanda is a girl who loves books. harold is a guy who hates homework. does amanda hate books and does harold love homework?
+        susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?
+        '''
+    _test_cases = _test_cases.strip()
     if True:  # Change this line to enable/disable the built in test case checking.
         for line in _test_cases.splitlines(False):
-            print("=" * 60)
+            print("-" * 60)
             print_process_text(line.strip())
             time.sleep(0.5)  # Some terminals (PyCharm) have issues with text moving too fast.
-    while True:
-        print("="*60)
-        t = input("\n: ")
+    while 1 == 1:
+        print("-"*60)
+        t = input(": ")
         if len(t) <= 0:
             break
         print_process_text(t, False)

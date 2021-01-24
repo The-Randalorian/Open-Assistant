@@ -19,13 +19,13 @@ def loopTask():
     pass
 
 def startThread():
-    global runThread
+    global runThread, threadActive
     threadActive = True
     runThread = threading.Thread(target = threadScript)
     runThread.start()
 
 def closeThread():
-    global runThread
+    global runThread, threadActive
     threadActive = False
     runThread.join()
 

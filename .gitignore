@@ -124,5 +124,7 @@ dmypy.json
 /englishSTT/deepspeech-0.5.0-models/
 /englishSTT/deepspeech-0.6.0-models/
 /englishSTT/deepspeech-0.7.0-models/
+/englishSTT/deepspeech-0.9.3-models/
 /englishSTT/lastRecord.wav
 /haYeelight/lights.json
+/sqlThingStorage/sql_urls.txt

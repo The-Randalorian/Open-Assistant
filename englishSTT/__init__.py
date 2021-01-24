@@ -9,27 +9,31 @@ runThread = None
 threadActive = False
 dsModel = None
 stream = None
-audsrc = None
+defaudsrc = None
 actions = None
 working = False
+AUTO = object()
 with open(r"englishSTT\en_us_replacements.json") as f:
     replacements = json.load(f)
     replacements = dict((re.escape(k), v) for k, v in replacements.items())
     pattern = re.compile("|".join(replacements.keys()))
 
 def _register_(serviceList, pluginProperties):
-    global services, plugin, core, audioRecorder, dsModel, stream, audsrc, actions
+    global services, plugin, core, audioRecorder, dsModel, stream, defaudsrc, actions
     services = serviceList
     plugin = pluginProperties
     core = services["core"][0]
     audioRecorder = services["audioRecorder"][0]
     actions = services["actions"][0]
 
-    audsrc = audioRecorder.AudioSource(device = 1)
+    defaudsrc = audioRecorder.getAudioSource(device=1)
 
     dsModel = deepspeech.Model(
-        r"englishSTT\deepspeech-0.7.0-models\deepspeech-0.7.0-models.pbmm",
-        ) # 500)
+        r"englishSTT\deepspeech-0.9.3-models\deepspeech-0.9.3-models.pbmm",
+    )
+    dsModel.enableExternalScorer(
+        r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
+    )
     #dsModel.enableDecoderWithLM(
     #    r"englishSTT\model\lm.binary",
     #    r"englishSTT\model\trie",
@@ -49,12 +53,14 @@ def _register_(serviceList, pluginProperties):
     #core.addClose(closeThread)
     #core.addLoop(loopTask)
 
-def trigger(*args):
+def trigger(audsrc=AUTO, *args):
     global working
     if not working:
         working = True
-        global services, plugin, core, audioRecorder, dsModel, audsrc, actions, pattern, replacements
-        import wave, pyaudio
+        global services, plugin, core, audioRecorder, dsModel, defaudsrc, actions, pattern, replacements
+        import wave#, pyaudio
+        if audsrc == AUTO:
+            audsrc = defaudsrc
         #audioRecorder = services["audioRecorder"][0]
         #audsrc = audioRecorder.AudioSource()
         WAVE_OUTPUT_FILENAME = "englishSTT\lastRecord.wav"
@@ -120,7 +126,7 @@ def loopTask():
 def startThread():
     global runThread
     threadActive = True
-    runThread = threading.Thread(target = threadScript)
+    runThread = threading.Thread(target=threadScript)
     runThread.start()
 
 def closeThread():

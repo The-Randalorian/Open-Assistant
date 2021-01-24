@@ -28,8 +28,7 @@ types, consider adding them here and making a pull request.
 '''
 
 
-import colorsys
-import json
+import colorsys, json, logging
 from datetime import datetime
 from collections import namedtuple
 
@@ -38,8 +37,10 @@ import gender_guesser.detector as gender
 
 try:
     from .understanding import Thing, Action, ThingReference, ThingType
+    from . import packaging
 except ImportError:
     from understanding import Thing, Action, ThingReference, ThingType
+    import packaging
 
 general_knowledge = {}
 
@@ -93,6 +94,49 @@ class Color(Thing):
     def __repr__(self):
         return str(self)
 
+@packaging.misc_dumper(datetime, "datetime", 1)
+def _datetime_dumper(dt):
+    return {
+        "year": dt.year,
+        "month": dt.month,
+        "day": dt.day,
+        "hour": dt.hour,
+        "minute": dt.minute,
+        "second": dt.second,
+        "microsecond": dt.microsecond,
+        "tzinfo": dt.tzinfo,
+        "fold": dt.fold
+    }
+
+@packaging.misc_loader("datetime", 1)
+def _datetime_loader(data, version):
+    return datetime(
+        year=data["year"],
+        month=data["month"],
+        day=data["day"],
+        hour=data["hour"],
+        minute=data["minute"],
+        second=data["second"],
+        microsecond=data["microsecond"],
+        tzinfo=data["tzinfo"],
+        fold=data["fold"]
+    )
+
+@packaging.misc_dumper(dateutil.tz.tzutc, "tzutc", 1)
+def _tzutc_dumper(dt):
+    return {}
+
+@packaging.misc_loader("tzutc", 1)
+def _tzutc_loader(data, version):
+    return dateutil.tz.tzutc()
+
+@packaging.misc_dumper(dateutil.tz.tzlocal, "tzlocal", 1)
+def _tzlocal_dumper(dt):
+    return {}
+
+@packaging.misc_loader("tzutc", 1)
+def _tzlocal_loader(data, version):
+    return dateutil.tz.tzlocal()
 
 class DateTime(Thing):
     _utc, _local = dateutil.tz.tzutc(), dateutil.tz.tzlocal()
@@ -105,6 +149,10 @@ class DateTime(Thing):
         else:
             self.time = time
         super().__init__(**kwargs)
+        self._saveables = {
+            "time": self.time,
+            "timezone": self.timezone
+        }
 
     @classmethod
     def from_datetime_string(cls, datetime_str, timezone=_local,
@@ -150,6 +198,17 @@ class Song(Thing):
 
 Relation = namedtuple("Relation", "person method")
 
+@packaging.misc_dumper(Relation, "Relation", 1)
+def _tzlocal_dumper(r):
+    return {
+        "person": r.person,
+        "method": r.method,
+    }
+
+@packaging.misc_loader("Relation", 1)
+def _relation_loader(data, version):
+    return Relation(data["person"], data["method"])
+
 
 class Person(Thing):
     gender_detector = gender.Detector(case_sensitive=False)
@@ -193,20 +252,50 @@ class Person(Thing):
         self.gender = kwargs.pop("gender", None)
         self.birthday = kwargs.pop("birthday", None)
         self.relations = kwargs.pop("relations", [])
-        self.called = kwargs.pop("called", None)
+        self.objective = kwargs.pop("objective", kwargs.get("subjective", None))
+        self.subjective = kwargs.pop("subjective", self.objective)
         self.possessive = kwargs.pop("possessive", None)
         self.tense = kwargs.pop("tense", "s")
         self.opinions = {}
         for opinion, rating in kwargs.pop("opinions", []):
-            self.opinions[opinion] = [rating]
+            try:
+                self.opinions[opinion.name] = rating
+            except:
+                self.opinions[opinion] = rating
         super().__init__(**kwargs)
-        if self.called is None:
-            self.called = self.name
+        if self.objective is None:
+            self.objective = self.name
+        if self.subjective is None:
+            self.subjective = self.name
         Person.people[self.name] = self
         for rating in self.opinion_ratings.keys():
             self.make_action(self._like_action, rating, self, True)
         if self.gender is None:
             self.gender = self.guess_gender()
+        self._saveables = {
+            "name": self.name,
+            "gender": self.gender,
+            "birthday": self.birthday,
+            "relations": self.relations,
+            "objective": self.objective,
+            "subjective": self.subjective,
+            "possessive": self.possessive,
+            "tense": self.tense,
+            "opinions": self.opinions_list
+        }
+        #self.store()
+
+    @property
+    def opinions_iter(self):
+         yield from self.opinions.items()
+
+    @property
+    def opinions_list(self):
+        return list(self.opinions_iter)
+
+    @property
+    def opinions_keys_string(self):
+        yield from map(str, self.opinions.keys())
 
     def guess_gender(self):
         gender_guess = Person.gender_detector.get_gender(self.name, "usa")
@@ -225,22 +314,23 @@ class Person(Thing):
                 rankings[value] = []
             for obj in verb.obj:
                 ot = obj.thing
-                if ot in self.opinions:
-                    rankings[self.opinions[ot]].append(getattr(ot, "called", ot.name))
+                # if ot in self.opinions:  # I used to use the objects as reference, the serializer does not rebuild those objects properly. When I can get it to, this will probably change back.
+                if ot.name in self.opinions:
+                    rankings[self.opinions[ot.name]].append(getattr(ot, "objective", ot.name))
                 else:
                     found = False
                     for classification in ot.get_classifications():
                         classification.get_ref()
                         if classification in self.opinions:
                             found = True
-                            rankings[self.opinions[classification]].append(getattr(ot, "called", ot.name))
+                            rankings[self.opinions[classification]].append(getattr(ot, "objective", ot.name))
                     if not found:
-                        rankings[0].append(getattr(ot, "called", ot.name))
+                        rankings[0].append(getattr(ot, "objective", ot.name))
             response = ""
             for level, value in Person.opinion_ratings.items():
                 ranking = rankings[value]
                 if len(ranking) >= 1:
-                    response += f"{self.called} {level}{self.tense}"
+                    response += f"{self.subjective} {level}{self.tense}"
                     for rank in ranking[:-1]:
                         response += f" {rank},"
                     response = response.rstrip(",")
@@ -249,7 +339,7 @@ class Person(Thing):
                     response += f" {ranking[-1]}. "
             ranking = rankings[0]
             if len(ranking) >= 1:
-                response += f"i don't know if {self.called} "
+                response += f"i don't know if {self.subjective} "
                 response += f"{verb.text}{self.tense}"
                 for rank in ranking[:-1]:
                     response += f" {rank},"
@@ -259,8 +349,24 @@ class Person(Thing):
                 response += f" {ranking[-1]}. "
             return response
         for obj in verb.obj:
-            self.opinions[obj.thing] = rating
+            self.opinions[obj.thing.name] = rating
+        print("storing saved obj")
+        self.store()
         return "Ok."
+
+    def store(self):
+        self._saveables = {
+            "name": self.name,
+            "gender": self.gender,
+            "birthday": self.birthday,
+            "relations": self.relations,
+            "objective": self.objective,
+            "subjective": self.subjective,
+            "possessive": self.possessive,
+            "tense": self.tense,
+            "opinions": self.opinions_list
+        }
+        super().store()
 
     def get_classifications(self):
         yield from super().get_classifications()
@@ -329,9 +435,10 @@ general_knowledge["holo.birthday"] = DateTime.from_datetime_string(
 # noinspection PyTypeChecker
 _holo = general_knowledge["holo"] = SystemPersonality(
     name="holo",  # Idea came from both holograms and [MYSTERY ;)].
-    opinions=[(Thing.get_by_name("apples"), 2)],
-    birthday=general_knowledge["holo.birthday"],
-    called="me",
+    opinions=[(Thing.get_by_name("apple"), 10)],  # Apples are a hint
+    birthday=Thing.get_by_name("holo.birthday"),
+    subjective="i",
+    objective="me",
     possessive="my",
     tense=""
 )
@@ -343,19 +450,20 @@ general_knowledge["prism.birthday"] = DateTime.from_datetime_string(
 # noinspection PyTypeChecker
 _prism = general_knowledge["prism"] = SystemPersonality(
     name="prism",  # Idea came from the original test triangular power symbol.
-    opinions=[(Thing.get_by_name("light"), 1)],
-    birthday=general_knowledge["prism.birthday"],
-    called="me",
+    opinions=[(Thing.get_by_name("light"), 10)],
+    birthday=Thing.get_by_name("prism.birthday"),
+    subjective="i",
+    objective="me",
     possessive="my",
     tense=""
 )
 
-_holo.relations.append(Relation(_prism, "sister"))
-_prism.relations.append(Relation(_holo, "sister"))
+_holo.relations.append(Relation(Thing.get_by_name("prism"), "sister"))
+_prism.relations.append(Relation(Thing.get_by_name("holo"), "sister"))
 # noinspection PyTypeChecker
 speaker = general_knowledge["i"] = Person(
     name="i",
-    called="you",
+    objective="you",
     tense=""
 )
 Thing.things["you"] = ThingReference("holo")

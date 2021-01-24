@@ -23,11 +23,11 @@ tensorflow - Machine learning (required for deepspeech).
 First you will need to install PyTorch and Tensorflow. These libraries have different installation instructions depending on your system, such as whether you have an NVIDIA GPU or not. The instructions can be found at [https://pytorch.org/](https://pytorch.org/) and [https://www.tensorflow.org/install](https://www.tensorflow.org/install). Once this is done, the rest of the libraries are fairly easy.
 If you have python version 3.__6__ or __older__ run the following command in a command line.
 ```
-python -m pip install stanza pywin32 pyttsx3 pyaudio numpy tensorflow deepspeech -U
+python -m pip install stanza pywin32 pyttsx3 deepspeech python-dateutil gender-guesser camel pyaudio -U
 ```
 If you have python version 3.__7__ or 3.__8__ run the following command in the command line.
 ```
-python -m pip install stanza pywin32 pyttsx3 numpy tensorflow deepspeech -U
+python -m pip install stanza pywin32 pyttsx3 deepspeech python-dateutil gender-guesser camel -U
 ```
 You will then have to install pyaudio manually. First download it from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio), then install it with:
 ```

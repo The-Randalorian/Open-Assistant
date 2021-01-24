@@ -1,0 +1,49 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+name = "pytorch cu"
+url = "https://download.pytorch.org/whl/cu110"
+verify_ssl = true
+
+[[source]]
+name = "pytorch cpu"
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = true
+
+[[source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl"
+verify_ssl = true
+
+[[source]]
+name = "lfd uci"
+url = "https://download.lfd.uci.edu/pythonlibs/z4tqcw5k/"
+#https://download.lfd.uci.edu/pythonlibs/z4tqcw5k/PyAudio-0.2.11-cp38-cp38-win_amd64.whl
+verify_ssl = true
+
+[packages]
+stanza = "*"
+pywin32 = "*"
+pyttsx3 = "*"
+#numpy = "*"
+#tensorflow = "*"
+deepspeech = "==0.9.3"
+torch = {index = "pytorch cu",version = "===1.7.1"}
+#torchvision = {index = "pytorch cu",version = "===0.8.2"}
+#torchaudio = {index = "pytorch",version = "===0.7.2"}
+python-dateutil = "*"
+gender-guesser = "*"
+#pyaudio = {index = "lfd uci",version = "*"}
+yeelight = "*"
+camel = "*"
+sqlalchemy = "*"
+pymysql = "*"
+mysqlclient = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

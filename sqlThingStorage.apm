@@ -1,0 +1,15 @@
+[properties]
+name = sqlThingStorage
+version = 0.1.0
+service = sqlThingStorage
+exclusive = no
+
+[order]
+before = []
+after = [{"plugin":"$core", "priority":0}]
+
+[updates]
+format = 0.1.0
+remoteroot = https://github.com/The-Randalorian/Open-Assistant/master/
+localroot = _APPLES_/
+files = ["sqlThingStorage.apm", "sqlThingStorage/__init__.py"]

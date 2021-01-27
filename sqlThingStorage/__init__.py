@@ -124,7 +124,7 @@ def sha512(byte_string):
     return hasher.digest()
 
 def sha256(byte_string):
-    hasher = hashlib.sha512()
+    hasher = hashlib.sha256()
     hasher.update(byte_string)
     return hasher.digest()
 

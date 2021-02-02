@@ -1,6 +1,6 @@
 [properties]
 name = homeAutomation
-version = 0.2.1
+version = 0.2.2
 service = homeAutomation
 exclusive = no
 
@@ -9,6 +9,7 @@ before = []
 after = [{"plugin":"$actions", "priority":0}]
 
 [updates]
-remoteroot = https://raw.githubusercontent.com/Gator-Boy11/APPLES/master/
+format = 0.1.0
+remoteroot = https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/master/
 localroot = _APPLES_/
-files = [["homeAutomation.apm", "homeAutomation.apm"], ["homeAutomation/__init__.py", "homeAutomation/__init__.py"]]
+files = ["homeAutomation.apm", "homeAutomation/__init__.py"]

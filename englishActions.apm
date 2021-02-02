@@ -1,6 +1,6 @@
 [properties]
 name = englishActions
-version = 0.5.0
+version = 0.5.1
 service = actions
 exclusive = yes
 
@@ -9,6 +9,7 @@ before = []
 after = [{"plugin":"$core", "priority":0}]
 
 [updates]
-remoteroot = https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/
+format = 0.1.0
+remoteroot = https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/master/
 localroot = _APPLES_/
-files = [["englishActions.apm", "englishActions.apm"], ["englishActions/__init__.py", "englishActions/__init__.py"], ["englishActions/vbf.py", "englishActions/vbf.py"]]
+files = ["englishActions.apm", "englishActions/__init__.py", "englishActions/understanding.py", "englishActions/general_knowledge.py", "englishActions/speech.py", "englishActions/packaging.py", "englishActions/thesaurus/__init__.py",  "englishActions/thesaurus/zaibacu-thesaurus/en_thesaurus.jsonl",  "englishActions/thesaurus/zaibacu-thesaurus/README.md", "englishActions/color-names/color-names.json"]

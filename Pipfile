@@ -42,6 +42,7 @@ camel = "*"
 sqlalchemy = "*"
 pymysql = "*"
 mysqlclient = "*"
+cx-oracle = "*"
 
 [dev-packages]
 

@@ -15,11 +15,18 @@ stanza - Language processing.
 pywin32 - WINDOWS ONLY; Special weird windows fixes.
 pyttsx3 - Text to speech.
 pyaudio - Audio recording and playback.
-numpy - Fast number processing.
 deepspeech - Speech to text.
 pytorch - Machine learning (required for stanza).
 tensorflow - Machine learning (required for deepspeech).
+python-dateutil - Date and time operations.
+gender-guesser - Guessing genders from names.
+camel - Object serialization.
+sqlalchemy - SQL database interaction.
+pymysql - SQLalchemy driver.
+mysqlclient - SQLalchemy driver.
 ```
+These packages also have their own dependencies, however pip will handle installing those.
+
 First you will need to install PyTorch and Tensorflow. These libraries have different installation instructions depending on your system, such as whether you have an NVIDIA GPU or not. The instructions can be found at [https://pytorch.org/](https://pytorch.org/) and [https://www.tensorflow.org/install](https://www.tensorflow.org/install). Once this is done, the rest of the libraries are fairly easy.
 If you have python version 3.__6__ or __older__ run the following command in a command line.
 ```

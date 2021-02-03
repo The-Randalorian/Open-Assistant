@@ -13,18 +13,20 @@ defaudsrc = None
 actions = None
 working = False
 AUTO = object()
-with open(r"englishSTT\en_us_replacements.json") as f:
-    replacements = json.load(f)
-    replacements = dict((re.escape(k), v) for k, v in replacements.items())
-    pattern = re.compile("|".join(replacements.keys()))
+
 
 def _register_(serviceList, pluginProperties):
-    global services, plugin, core, audioRecorder, dsModel, stream, defaudsrc, actions
+    global services, plugin, core, audioRecorder, dsModel, stream, defaudsrc, actions, replacements, pattern
     services = serviceList
     plugin = pluginProperties
     core = services["core"][0]
     audioRecorder = services["audioRecorder"][0]
     actions = services["actions"][0]
+
+    with open(r"englishSTT\en_us_replacements.json") as f:
+        replacements = json.load(f)
+        replacements = dict((re.escape(k), v) for k, v in replacements.items())
+        pattern = re.compile("|".join(replacements.keys()))
 
     defaudsrc = audioRecorder.getAudioSource(device=1)
 

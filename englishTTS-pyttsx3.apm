@@ -1,6 +1,6 @@
 [properties]
 name = englishTTS-pyttsx3
-version = 0.3.1
+version = 0.3.0
 service = tts
 exclusive = yes
 
@@ -9,7 +9,6 @@ before = []
 after = [{"plugin":"$core", "priority":0}]
 
 [updates]
-format = 0.1.0
-remoteroot = https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/master/
+remoteroot = https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/
 localroot = _APPLES_/
-files = ["englishTTS-pyttsx3.apm", "englishTTS-pyttsx3/__init__.py", "englishTTS-pyttsx3/utils.py"]
+files = [["englishTTS-pyttsx3.apm", "englishTTS-pyttsx3.apm"], ["englishTTS-pyttsx3/__init__.py", "englishTTS-pyttsx3/__init__.py"], ["englishTTS-pyttsx3/utils.py", "englishTTS-pyttsx3/utils.py"]]

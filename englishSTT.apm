@@ -1,6 +1,6 @@
 [properties]
 name = englishSTT
-version = 0.1.4
+version = 0.1.5
 service = stt
 exclusive = yes
 
@@ -9,6 +9,7 @@ before = []
 after = [{"plugin":"$core", "priority":0}]
 
 [updates]
-remoteroot = https://raw.githubusercontent.com/Gator-Boy11/Open-Assistant/master/
+format = 0.1.0
+remoteroot = https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/master/
 localroot = _APPLES_/
-files = [["englishSTT.apm", "englishSTT.apm"], ["englishSTT/__init__.py", "englishSTT/__init__.py"]]
+files = ["englishSTT.apm", "englishSTT/__init__.py", "englishSTT/en_us_replacements.json"]

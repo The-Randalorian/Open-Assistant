@@ -1,4 +1,4 @@
-import threading, time, deepspeech, audioop, re, json
+import threading, time, deepspeech, audioop, re, json, urllib.request,os
 import numpy as np
 
 services = {}
@@ -30,12 +30,29 @@ def _register_(serviceList, pluginProperties):
 
     defaudsrc = audioRecorder.getAudioSource(device=1)
 
-    dsModel = deepspeech.Model(
-        r"englishSTT\deepspeech-0.9.3-models\deepspeech-0.9.3-models.pbmm",
-    )
-    dsModel.enableExternalScorer(
-        r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
-    )
+    try:
+        dsModel = deepspeech.Model(
+            r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.pbmm",
+        )
+        dsModel.enableExternalScorer(
+            r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
+        )
+    except RuntimeError:
+        urllib.request.urlretrieve(
+            "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm",
+            "englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.pbmm"
+        )
+        urllib.request.urlretrieve(
+            "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer",
+            "englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
+        )
+        dsModel = deepspeech.Model(
+            r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.pbmm",
+        )
+        dsModel.enableExternalScorer(
+            r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
+        )
+
     #dsModel.enableDecoderWithLM(
     #    r"englishSTT\model\lm.binary",
     #    r"englishSTT\model\trie",

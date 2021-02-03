@@ -1,4 +1,4 @@
-import threading, time, deepspeech, audioop, re, json, urllib.request,os
+import threading, time, deepspeech, audioop, re, json, urllib.request, os
 import numpy as np
 
 services = {}
@@ -38,10 +38,14 @@ def _register_(serviceList, pluginProperties):
             r"englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"
         )
     except RuntimeError:
+        print("Downloading deepspeech models")
+        os.makedirs("englishSTT/deepspeech-0.9.3-models")
+        print("Downloading deepspeech .pbmm")
         urllib.request.urlretrieve(
             "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.pbmm",
             "englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.pbmm"
         )
+        print("Downloading deepspeech .scorer")
         urllib.request.urlretrieve(
             "https://github.com/mozilla/DeepSpeech/releases/download/v0.9.3/deepspeech-0.9.3-models.scorer",
             "englishSTT/deepspeech-0.9.3-models/deepspeech-0.9.3-models.scorer"

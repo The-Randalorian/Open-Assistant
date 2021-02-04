@@ -25,14 +25,14 @@ sqlalchemy - SQL database interaction.
 pymysql - SQLalchemy driver.
 mysqlclient - SQLalchemy driver.
 ```
-These packages also have their own dependencies, however pip will handle installing those.
+These packages also have their own dependencies, however pip will handle installing those. The following instructions are for standard pip. If you know how to use pipenv, download and use Pipfile and Pipfile.lock as normal. __Pyaudio will still need to be installed as described below.__
 
 First you will need to install PyTorch and Tensorflow. These libraries have different installation instructions depending on your system, such as whether you have an NVIDIA GPU or not. The instructions can be found at [https://pytorch.org/](https://pytorch.org/) and [https://www.tensorflow.org/install](https://www.tensorflow.org/install). Once this is done, the rest of the libraries are fairly easy.
 If you have python version 3.__6__ or __older__ run the following command in a command line.
 ```
 python -m pip install stanza pywin32 pyttsx3 deepspeech python-dateutil gender-guesser camel sqlalchemy pymysql mysqlclient pyaudio  -U
 ```
-If you have python version 3.__7__ or 3.__8__ run the following command in the command line.
+If you have python version 3.__7__, 3.__8__, or 3.__9__ run the following command in the command line.
 ```
 python -m pip install stanza pywin32 pyttsx3 deepspeech python-dateutil gender-guesser camel sqlalchemy pymysql mysqlclient -U
 ```
@@ -76,10 +76,27 @@ The STT plugin's job is turning the raw audio data into usable text. It also lis
 ### Actions
 The Actions plugin is the core of what makes Open Assistant different. The Actions plugin stores an internal list of "Things" which the assistant is capable of understanding. When unpacking a sentence, it aims to understand "what action is being done to what by what". This differs from the traditional keyword approach that just looks for keywords and guesses about what is intended. This allows complicated behaviors to develop from complicated sentences and makes the assistant feel less like a voice activated form filler.
 
-The use of the word "Things" above is quite literal. The assistant remembers what things are by having an internal list of instances of the "Thing" class, or more commonly, its subclasses such as "Person", "Date", "Color", etc. It attaches information to these Thing instances by creating or using additional thing instances as appropriate. For example, the sentence "Eve is a girl who likes red." will:
+The use of the word "Things" above is quite literal. The assistant remembers what things are by having an internal list of instances of the "Thing" class, or more commonly, its subclasses such as "Person", "Date", or "Color". It attaches information to these Thing instances by creating, casting, or using additional thing instances as appropriate. For example, the sentence "Eve is a girl who likes red." will:
 1. Create a Thing called "Eve".
 2. Cast the Eve Thing into a Person instance (girl is an alias of Person, which calls a special constructor to assign Eve's gender).
 3. Add the Color instance named "red" to the list of objects Eve likes.
 
+The Actions plugin also provides some other basic utilities necessary for using Open Assistant, such as the packaging module which is used for creating common ways to serialize and store Thing instances.
+
 ### Text to Speech (TTS)
 The Text to Speech plugin finishes handling the request by generating the audio to be heard by the user. In the future, these plugins will be able to either directly play back the audio or send it off to another plugin, allowing for a separate playback plugin. No separate playback plugin has been created as of yet though, so currently the plugin must handle playback internally. The option will stay to allow for the use of internal text to speech systems that can't give raw audio, like screen readers.
+
+### Other Components
+These are some other components used for smaller tasks. These are generally optional, but may still provide important functionality.
+
+homeAutomation
+: Some abstract Thing subclasses meant to make it easier for developers to make custom home automation interfaces.
+
+haYeelight
+: A sample plugin that makes use of the homeAutomation plugin to allow open assistant to control Yeelight bulbs.
+
+sqlThingStorage
+: Provides a method for Open Assistant to save Thing instances to an sql server using SQLalchemy.
+
+tkinterTrigger
+: A simple, one button GUI to trigger the voice assistant.

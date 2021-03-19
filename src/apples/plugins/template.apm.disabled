@@ -1,0 +1,27 @@
+{
+    "version": "0.0.0",
+    "format": "0.1.0",
+    "name": "template",
+    "human-name": "Template",
+    "description": "Template APM file",
+    "service": "template",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/template.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template.apm"
+        },
+        {
+            "local-url": "plugins/template/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template/__init__.py"
+        }
+    ]
+}

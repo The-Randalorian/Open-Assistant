@@ -127,6 +127,18 @@ def _make_automation_smart_light_white():
             )
 
 
+def _make_automation_smart_thermostat():
+    global AutomationSmartThermostat
+
+    class AutomationSmartThermostat(AutomationScalar, AutomationToggle):
+        def __init__(self, level_aliases=("level", "brightness"), **kwargs):
+            super().__init__(**kwargs)
+            self.add_action_to_system(
+                self._set_action,
+                ("dim", "brighten", "darken")
+            )
+
+
 def _make_automation_smart_light_color():
     global AutomationSmartLightColor
 

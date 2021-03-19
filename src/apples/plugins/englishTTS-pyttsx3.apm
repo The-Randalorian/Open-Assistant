@@ -1,0 +1,31 @@
+{
+    "version": "0.1.0",
+    "format": "0.1.0",
+    "name": "englishTTS-pyttsx3",
+    "human-name": "English TTS",
+    "description": "English TTS plugin using pyttsx3.",
+    "service": "tts",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/englishTTS-pyttsx3.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        },
+        {
+            "directive": "load-deny",
+            "module": "$tts"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/template.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/englishTTS-pyttsx3.apm"
+        },
+        {
+            "local-url": "plugins/template/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template/__init__.py"
+        }
+    ]
+}

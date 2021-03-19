@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "format": "0.1.0",
+    "name": "plugman",
+    "human-name": "Plugin Manager",
+    "description": "Plugin manager and updater.",
+    "service": "plugman",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-before",
+            "module": "$core"
+        },
+        {
+            "directive": "load-deny",
+            "module": "$plugman"
+        },
+        {
+            "directive": "run-after-load",
+            "module": "$core",
+            "method": "post_load_core"
+        },
+        {
+            "directive": "run-after-load",
+            "module": "$terminal",
+            "method": "post_load_terminal"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/plugman.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman.apm"
+        },
+        {
+            "local-url": "plugins/plugman/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/__init__.py"
+        },
+        {
+            "local-url": "plugins/plugman/handlers/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/__init__.py"
+        },
+        {
+            "local-url": "plugins/plugman/handlers/apm/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/apm/__init__.py"
+        },
+        {
+            "local-url": "plugins/plugman/handlers/apm/f0_1_0.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/apm/f0_1_0.py"
+        }
+    ]
+}

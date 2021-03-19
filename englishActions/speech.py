@@ -437,6 +437,8 @@ if __name__ == "__main__":
         amanda is a girl who loves books. harold is a guy who hates homework. does amanda hate books and does harold love homework?
         susan is a woman who adores dogs and bob is a person who hates apples. do he and susan love dogs and apples?
         '''
+        #jenny is a woman who loves cooking, gerald is a person who hates oranges but enjoys games. heather is a person who dislikes fun and harold is a guy who loves jenny. harold, jenny and gerald dislike heather, heather and gerald adore dogs, while jenny and heather dislike books. do they like dogs, games, oranges, fun, and jenny?
+        #'''
     _test_cases = _test_cases.strip()
     if True:  # Change this line to enable/disable the built in test case checking.
         for line in _test_cases.splitlines(False):

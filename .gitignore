@@ -120,11 +120,8 @@ dmypy.json
 #JetBrains PyCharm Settings
 .idea/
 
-/englishSTT/model/
-/englishSTT/deepspeech-0.5.0-models/
-/englishSTT/deepspeech-0.6.0-models/
-/englishSTT/deepspeech-0.7.0-models/
-/englishSTT/deepspeech-0.9.3-models/
-/englishSTT/lastRecord.wav
+/src/apples/plugins/english_stt/model/
+/src/apples/plugins/english_stt/deepspeech-0.9.3-models/
+/src/apples/plugins/english_stt/lastRecord.wav
 /haYeelight/lights.json
 /sqlThingStorage/sql_urls.txt

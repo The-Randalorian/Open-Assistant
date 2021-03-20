@@ -26,7 +26,7 @@ def _register_(serviceList, pluginProperties):
     synthesizer.load(str(modelPath))
     time.sleep(3)
     say("Scientists at the CERN laboratory say they have discovered a new particle.")
-    #core.addStart(startThread)
+    #core.addStart(start_thread)
     #core.addClose(closeThread)
     #core.addLoop(loopTask)
 

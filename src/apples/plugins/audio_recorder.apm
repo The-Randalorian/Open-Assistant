@@ -1,0 +1,27 @@
+{
+    "version": "0.1.0",
+    "format": "0.1.0",
+    "name": "audio_recorder",
+    "human-name": "Audio Recorder",
+    "description": "Audio recording system using pyaudio.",
+    "service": "audio_recorder",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/audio_recorder.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/audio_recorder.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/audio_recorder.apm"
+        },
+        {
+            "local-url": "plugins/audio_recorder/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/audio_recorder/__init__.py"
+        }
+    ]
+}

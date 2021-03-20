@@ -25,14 +25,14 @@ button[disabled] {opacity: 0.4; cursor: default}
 <p id="message"></p>
 <audio id="audio" controls autoplay hidden></audio>
 <script>
-function q(selector) {return document.querySelector(selector)}
-q('#text').focus()
-q('#button').addEventListener('click', function(e) {
-  text = q('#text').value.trim()
+function instruction_queue(selector) {return document.querySelector(selector)}
+instruction_queue('#text').focus()
+instruction_queue('#button').addEventListener('click', function(e) {
+  text = instruction_queue('#text').value.trim()
   if (text) {
-    q('#message').textContent = 'Synthesizing...'
-    q('#button').disabled = true
-    q('#audio').hidden = true
+    instruction_queue('#message').textContent = 'Synthesizing...'
+    instruction_queue('#button').disabled = true
+    instruction_queue('#audio').hidden = true
     synthesize(text)
   }
   e.preventDefault()
@@ -44,13 +44,13 @@ function synthesize(text) {
       if (!res.ok) throw Error(res.statusText)
       return res.blob()
     }).then(function(blob) {
-      q('#message').textContent = ''
-      q('#button').disabled = false
-      q('#audio').src = URL.createObjectURL(blob)
-      q('#audio').hidden = false
+      instruction_queue('#message').textContent = ''
+      instruction_queue('#button').disabled = false
+      instruction_queue('#audio').src = URL.createObjectURL(blob)
+      instruction_queue('#audio').hidden = false
     }).catch(function(err) {
-      q('#message').textContent = 'Error: ' + err.message
-      q('#button').disabled = false
+      instruction_queue('#message').textContent = 'Error: ' + err.message
+      instruction_queue('#button').disabled = false
     })
 }
 </script></body></html>

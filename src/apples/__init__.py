@@ -2,7 +2,7 @@
 
 # APPLES - Automatic Python Plugin Loading & Executing Script
 
-# Version 0.2.1
+# Version 0.2.2
 
 import os              # Library used for accessing basic os features.
 import importlib       # Library used for dynamically loading plugins.
@@ -190,12 +190,17 @@ def _apm_handler(source_file, manifests):
 
 def _parse_apm_json_0_1_0(plugin_manifest):
     plugin_human_name = plugin_manifest.get("human-name", None)
+    plugin_service = plugin_manifest.get("service", None)
     if plugin_human_name is None:
         plugin_human_name = plugin_manifest["name"]
         _logger.warning(f"No human name found for {plugin_human_name}. Using module name.")
+    if plugin_service is None:
+        plugin_service = plugin_manifest["name"]
+        _logger.warning(f"No service name found for {plugin_human_name}. Using module name.")
     _logger.debug(f"Detected manifest format 0.1.0 for {plugin_human_name}.")
     p_m = {
         "human-name": plugin_human_name,
+        "service": plugin_service,
         "requirements": [],
         "load-directives": [],
         "files": [],
@@ -314,7 +319,7 @@ _load_directives = {
 def _load_plugin(plugin_entry, plugins):
     plugin_name = plugin_entry["name"]
     plugin_human_name = plugin_entry["human-name"]
-    plugin_service = plugin_entry["name"]
+    plugin_service = plugin_entry["service"]
     _logger.info(f"Loading {plugin_human_name}.")
     plugin_module = importlib.import_module(f".plugins.{plugin_name}", package=__package__)
     _logger.info(f"Loaded {plugin_human_name}.")

@@ -8,21 +8,21 @@ name = "pytorch cu"
 url = "https://download.pytorch.org/whl/cu110"
 verify_ssl = true
 
-[[source]]
-name = "pytorch cpu"
-url = "https://download.pytorch.org/whl/cpu"
-verify_ssl = true
+#[[source]]
+#name = "pytorch cpu"
+#url = "https://download.pytorch.org/whl/cpu"
+#verify_ssl = true
 
-[[source]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl"
-verify_ssl = true
+#[[source]]
+#name = "pytorch"
+#url = "https://download.pytorch.org/whl"
+#verify_ssl = true
 
-[[source]]
-name = "lfd uci"
-url = "https://download.lfd.uci.edu/pythonlibs/z4tqcw5k/"
+#[[source]]
+#name = "lfd uci"
+#url = "https://download.lfd.uci.edu/pythonlibs/z4tqcw5k/"
 #https://download.lfd.uci.edu/pythonlibs/z4tqcw5k/PyAudio-0.2.11-cp38-cp38-win_amd64.whl
-verify_ssl = true
+#verify_ssl = true
 
 [packages]
 stanza = "*"

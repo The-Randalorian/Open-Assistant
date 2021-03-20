@@ -12,6 +12,10 @@
         {
             "directive": "load-after",
             "module": "$core"
+        },
+        {
+            "directive": "load-after",
+            "module": "$terminal"
         }
     ],
     "files": [

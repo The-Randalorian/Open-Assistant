@@ -44,6 +44,8 @@ class SQLThingStorage(actions.packaging.ThingStorage):
         except AssertionError as error:
             logging.warning(f"Invalid authentication: \"{error}\"")
 
+
+    # I should move this to implementation, or maybe have a separate server layer.
     def create_user(self, username, password, email="donotreply@donotreply.net"):
         try:
             with sqlalchemy.orm.Session(self.engine) as session:

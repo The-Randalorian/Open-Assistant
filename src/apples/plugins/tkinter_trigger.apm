@@ -1,0 +1,35 @@
+{
+    "version": "0.0.0",
+    "format": "0.1.0",
+    "name": "tkinter_trigger",
+    "human-name": "TkInter Trigger",
+    "description": "TkInter based open assistant trigger.",
+    "service": "tkinter_trigger",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        },
+        {
+            "directive": "load-after",
+            "module": "$stt"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/tkinter_trigger.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/tkinter_trigger.apm"
+        },
+        {
+            "local-url": "plugins/tkinter_trigger/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/tkinter_trigger/__init__.py"
+        },
+        {
+            "local-url": "plugins/tkinter_trigger/logo.png",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/tkinter_trigger/logo.png"
+        }
+    ]
+}

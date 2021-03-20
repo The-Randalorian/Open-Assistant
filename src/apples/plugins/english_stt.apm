@@ -1,0 +1,39 @@
+{
+    "version": "0.1.0",
+    "format": "0.1.0",
+    "name": "english_stt",
+    "human-name": "English STT",
+    "description": "English Speech to Text Engine.",
+    "service": "stt",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        },
+        {
+            "directive": "load-after",
+            "module": "$terminal"
+        },
+        {
+            "directive": "load-after",
+            "module": "$actions"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/english_stt.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt.apm"
+        },
+        {
+            "local-url": "plugins/template/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/__init__.py"
+        },
+        {
+            "local-url": "plugins/template/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/en_us_replacements.json"
+        }
+    ]
+}

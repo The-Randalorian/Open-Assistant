@@ -1,0 +1,75 @@
+{
+    "version": "0.1.0",
+    "format": "0.1.0",
+    "name": "english_actions",
+    "human-name": "English Actions",
+    "description": "Handler for converting text to actions to perform.",
+    "service": "actions",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        },
+        {
+            "directive": "load-after",
+            "module": "$terminal"
+        },
+        {
+            "directive": "load-after",
+            "module": "$tts"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/english_actions.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions.apm"
+        },
+        {
+            "local-url": "plugins/english_actions/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/__init__.py"
+        },
+        {
+            "local-url": "plugins/english_actions/general_knowledge.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/general_knowledge.py"
+        },
+        {
+            "local-url": "plugins/english_actions/speech.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/speech.py"
+        },
+        {
+            "local-url": "plugins/english_actions/storage.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/storage.py"
+        },
+        {
+            "local-url": "plugins/english_actions/understanding.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/understanding.py"
+        },
+        {
+            "local-url": "plugins/english_actions/color-names/color-names.json",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/color-names/color-names.json"
+        },
+        {
+            "local-url": "plugins/english_actions/color-names/LICENSE.md",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/color-names/LICENSE.md"
+        },
+        {
+            "local-url": "plugins/english_actions/color-names/README.md",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/color-names/README.md"
+        },
+        {
+            "local-url": "plugins/english_actions/thesaurus/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/thesaurus/__init__.py"
+        },
+        {
+            "local-url": "plugins/english_actions/thesaurus/zaibacu-thesaurus/en_thesaurus.jsonl",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/thesaurus/zaibacu-thesaurus/en_thesaurus.jsonl"
+        },
+        {
+            "local-url": "plugins/english_actions/thesaurus/zaibacu-thesaurus/README.md",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_actions/thesaurus/zaibacu-thesaurus/README.md"
+        }
+    ]
+}

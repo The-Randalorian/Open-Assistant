@@ -259,7 +259,7 @@ def _register_(serviceList, pluginProperties):
     plugin = pluginProperties
     core = services["core"][0]
     actions = services["actions"][0]
-    #core.addStart(startThread)
+    #core.addStart(start_thread)
     #core.addClose(closeThread)
     #core.addLoop(loopTask)
 

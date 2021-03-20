@@ -56,7 +56,7 @@ def _register_(serviceList, pluginProperties):
     #for i in range(len(lightData)):
         #vbf.mem["yeelightlight"+str(i)] = YeelightSmartLight(lightData[i]["ip"])
     #print(vbf.mem)
-    #core.addStart(startThread)
+    #core.addStart(start_thread)
     #core.addClose(closeThread)
     #core.addLoop(loopTask)
 

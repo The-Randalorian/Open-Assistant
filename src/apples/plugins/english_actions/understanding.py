@@ -31,6 +31,7 @@ class Thing:
     thing_types = {}
     _thing_type_placeholder = _placeholder_function
     classifications = []
+    packaging_version = 1
 
     def __init__(self, session: typing.Optional[storage.ThingStorageSession] = None, **kwargs):
         self.name = kwargs.pop("name")
@@ -144,10 +145,6 @@ class Thing:
             self.session.put(self)
         else:
             _logger.warning(f"Could not store {self}. No session set.")
-
-    @property
-    def packaging_version(self):
-        return 1
 
 
 storage.dumper(Thing, Thing.__name__, Thing.packaging_version)(Thing.dumper)

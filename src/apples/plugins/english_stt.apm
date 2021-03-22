@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "format": "0.1.0",
     "name": "english_stt",
     "human-name": "English STT",
@@ -32,7 +32,7 @@
             "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/__init__.py"
         },
         {
-            "local-url": "plugins/english_stt/__init__.py",
+            "local-url": "plugins/english_stt/en_us_replacements.json",
             "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/en_us_replacements.json"
         }
     ]

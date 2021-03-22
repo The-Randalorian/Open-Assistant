@@ -1,11 +1,11 @@
 {
-    "version": "0.2.0",
+    "version": "0.2.1",
     "format": "0.1.0",
     "name": "plugman",
     "human-name": "Plugin Manager",
     "description": "Plugin manager and updater.",
     "service": "plugman",
-    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman.apm",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman.apm",
     "requirements": [
     ],
     "load-directives": [
@@ -31,23 +31,23 @@
     "files": [
         {
             "local-url": "plugins/plugman.apm",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman.apm"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman.apm"
         },
         {
             "local-url": "plugins/plugman/__init__.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/__init__.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman/__init__.py"
         },
         {
             "local-url": "plugins/plugman/handlers/__init__.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/__init__.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman/handlers/__init__.py"
         },
         {
             "local-url": "plugins/plugman/handlers/apm/__init__.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/apm/__init__.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman/handlers/apm/__init__.py"
         },
         {
             "local-url": "plugins/plugman/handlers/apm/f0_1_0.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman/handlers/apm/f0_1_0.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman/handlers/apm/f0_1_0.py"
         }
     ]
 }

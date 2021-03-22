@@ -1,0 +1,39 @@
+{
+    "version": "0.0.0",
+    "format": "0.1.0",
+    "name": "sql_thing_storage",
+    "human-name": "SQL Thing Storage",
+    "description": "SQL Thing storage system interface",
+    "service": "sql_thing_storage",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/sql_thing_storage.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$actions"
+        },
+        {
+            "directive": "load-after",
+            "module": "$terminal"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/sql_thing_storage.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/sql_thing_storage.apm"
+        },
+        {
+            "local-url": "plugins/sql_thing_storage/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/sql_thing_storage/__init__.py"
+        },
+        {
+            "local-url": "plugins/sql_thing_storage/implementation.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/sql_thing_storage/implementation.py"
+        },
+        {
+            "local-url": "plugins/sql_thing_storage/administration.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/sql_thing_storage/administration.py"
+        }
+    ]
+}

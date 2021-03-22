@@ -22,15 +22,20 @@ class TerminalExit(Exception):
 
 
 class ArgumentParser(argparse.ArgumentParser):
-    def exit(self, status=0, message=None):
+    def exit(self, status: int = 0, message: str = None):
         if message:
             self._print_message(message, sys.stderr)
         raise TerminalExit
 
+
 @core.loop_task
 def _get_input():
     command_string = input(">:")
-    command_arguments = shlex.split(command_string, posix=False)
+    run_command(command_string)
+
+
+def run_command(command_string: str):
+    command_arguments = shlex.split(command_string, posix=True)
     _logger.debug(f"Interpreted command string \"{command_string}\" as {command_arguments}.")
     try:
         com = _commands[command_arguments[0]]
@@ -43,7 +48,6 @@ def _get_input():
     if com.arg_parser is None:
         com.function(arguments=command_arguments)
     else:
-        kwargs = {}
         try:
             ns = com.arg_parser.parse_args(command_arguments[1:])
             kwargs = vars(ns)
@@ -53,19 +57,20 @@ def _get_input():
             return
         com.function(arguments=command_arguments, **kwargs)
 
-def create_command(function, name, arg_parser=None):
+
+def create_command(function: callable, name: str, arg_parser: argparse.ArgumentParser = None):
     com = Command(name, function, arg_parser)
     add_command(com)
     return function
 
 
-def add_command(com):
+def add_command(com: Command):
     _logger.debug(f"Registered command {com}.")
     _commands[com.name] = com
 
 
 # Decorator
-def command(name, arg_parser=None):
+def command(name: str, arg_parser: argparse.ArgumentParser = None):
     return functools.partial(create_command, name=name, arg_parser=arg_parser)
 
 

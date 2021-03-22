@@ -1,25 +1,25 @@
 {
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"format": "0.2.0",
 	"name": "builtins",
 	"human-name": "APPLES Builtins",
 	"description": "Builtin plugins for APPLES plugins.",
-	"update-url":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/collections/builtins.apc",
+	"update-url":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/collections/builtins.apc",
 	"collection":[
 		{
 			"type":"plugin",
 			"local":"core.apm",
-			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/core.apm"
+			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/core.apm"
 		},
 		{
 			"type":"plugin",
 			"local":"terminal.apm",
-			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/terminal.apm"
+			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/terminal.apm"
 		},
 		{
 			"type":"plugin",
 			"local":"plugman.apm",
-			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/plugman.apm"
+			"remote":"https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/plugman.apm"
 		},
 		{
 			"type":"file",

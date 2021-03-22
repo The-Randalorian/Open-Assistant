@@ -22,6 +22,8 @@ loader = thing_camel_registry.loader
 misc_dumper = misc_camel_registry.dumper
 misc_loader = misc_camel_registry.loader
 
+general_knowledge = {}
+
 
 def dump_raw(thing):
     raw = Camel(camel_registries).dump(thing)
@@ -52,7 +54,7 @@ def load(data):
     _logger.debug("Decompressed unidentified object id:%s.", log_id)
     _logger.debug("Loading unidentified object id:%s of length %s bytes.", log_id, len(raw))
     thing = load_raw(raw.decode("utf-8"))
-    _logger.debug("Loaded object id:#%s. Identified as %s.", log_id, thing.name)
+    _logger.debug(f"Loaded object id:{log_id}. Identified as {thing.name} of type {type(thing)}.")
     return thing
 
 
@@ -119,7 +121,7 @@ class ThingStorageSession:
         if data is None:
             return default
         thing = load(data)
-        thing.__dict__["session"] = self
+        self.add_to_session(thing)
         # Explicitly set __dict__["session"] to this object. This is important for thing references
         return thing
 
@@ -168,6 +170,11 @@ class ThingStorageSession:
         Commit all data transactions. This should return when all the data is finalized.
         """
         pass
+    
+    def add_to_session(self, thing):
+        if thing is not None:
+            thing.__dict__["session"] = self
+            thing.get_ref().session = self
 
 
 class OptimizedThingStorage(ThingStorage):
@@ -223,7 +230,8 @@ class OptimizedThingStorageSession(ThingStorageSession):
                   "him",
                   "it",
                   "they",
-                  "them"}
+                  "them",
+                  "who"}
 
     def __init__(self, master: ThingStorage):
         super().__init__(master)
@@ -236,7 +244,13 @@ class OptimizedThingStorageSession(ThingStorageSession):
         cached_thing = self.cache.get(name, None)
         if cached_thing is not None:
             return cached_thing
-        return super().get(name=name, default=default)
+        thing = super().get(name=name, default=default)
+        if thing is not None:
+            return thing
+        thing = general_knowledge.get(name, None)
+        if thing is not None:
+            self.add_to_session(thing)
+        return thing
 
     '''def get_data(self, name: str):
         """
@@ -291,5 +305,12 @@ class OptimizedThingStorageSession(ThingStorageSession):
 _default_thing_storage = OptimizedThingStorage()
 
 
-def get_default_storage():
+def get_default_storage() -> ThingStorage:
+    _logger.debug(f"Using default thing storage {_default_thing_storage}.")
     return _default_thing_storage
+
+
+def set_default_storage(storage: ThingStorage):
+    global _default_thing_storage
+    _default_thing_storage = storage
+    _logger.debug(f"Set default thing storage to {_default_thing_storage}.")

@@ -1,11 +1,11 @@
 {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "format": "0.1.0",
     "name": "core",
     "human-name": "Core",
     "description": "Core scheduler and entrypoint.",
     "service": "core",
-    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/core.apm",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/core.apm",
     "load-directives": [
         {
             "directive": "load-deny",
@@ -15,11 +15,11 @@
     "files": [
         {
             "local-url": "plugins/core.apm",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/core.apm"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/core.apm"
         },
         {
             "local-url": "plugins/core/__init__.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/core/__init__.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/core/__init__.py"
         }
     ]
 }

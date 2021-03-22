@@ -1,11 +1,11 @@
 {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "format": "0.1.0",
     "name": "terminal",
     "human-name": "Terminal",
     "description": "Terminal handler.",
     "service": "terminal",
-    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/terminal.apm",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/terminal.apm",
     "load-directives": [
         {
             "directive": "load-after",
@@ -19,11 +19,11 @@
     "files": [
         {
             "local-url": "plugins/terminal.apm",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/terminal.apm"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/terminal.apm"
         },
         {
             "local-url": "plugins/terminal/__init__.py",
-            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/plugins/terminal/__init__.py"
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/APPLES/0.2.0-Refactor/src/apples/plugins/terminal/__init__.py"
         }
     ]
 }

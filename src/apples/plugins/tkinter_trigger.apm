@@ -5,7 +5,7 @@
     "human-name": "TkInter Trigger",
     "description": "TkInter based open assistant trigger.",
     "service": "tkinter_trigger",
-    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/template.apm",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/tkinter_trigger.apm",
     "requirements": [
     ],
     "load-directives": [

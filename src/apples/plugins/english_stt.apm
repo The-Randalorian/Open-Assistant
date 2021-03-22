@@ -28,11 +28,11 @@
             "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt.apm"
         },
         {
-            "local-url": "plugins/template/__init__.py",
+            "local-url": "plugins/english_stt/__init__.py",
             "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/__init__.py"
         },
         {
-            "local-url": "plugins/template/__init__.py",
+            "local-url": "plugins/english_stt/__init__.py",
             "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/english_stt/en_us_replacements.json"
         }
     ]

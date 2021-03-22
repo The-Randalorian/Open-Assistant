@@ -263,6 +263,12 @@ def sha256(byte_string: bytes) -> bytes:
     hasher.update(byte_string)
     return hasher.digest()
 
+def hash_thing_data(thing_data: bytes) -> bytes:
+    """
+    Return a hash of Thing Data.
+    """
+    return sha512(thing_data)
+
 
 services = {}
 plugin = {}
@@ -272,7 +278,7 @@ root_user: User
 user: User
 
 valid_authentications = (
-    AuthMethods.internal_password_00_01
+    AuthMethods.internal_password_00_01,
 )
 
 def setup(engine):
@@ -287,7 +293,7 @@ def setup(engine):
                 password_salt=b"\x00" * 64,
                 encryption_salt=b"\x00" * 64,
                 auth_method=AuthMethods.internal_disabled,
-                email="donotreply@donotreply.net")
+                email="change_to@contact_email.net")
             session.add(root_user)
             session.commit()
     return root_user

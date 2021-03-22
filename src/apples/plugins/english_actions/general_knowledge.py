@@ -43,7 +43,7 @@ except ImportError:
     from understanding import Thing, Action, ThingReference, ThingType
     import storage
 
-general_knowledge = {}
+general_knowledge = storage.general_knowledge
 
 
 class Color(Thing):
@@ -270,7 +270,7 @@ class Person(Thing):
         for opinion, rating in kwargs.pop("opinions", []):
             try:
                 self.opinions[opinion.name] = rating
-            except KeyError:
+            except AttributeError:
                 self.opinions[opinion] = rating
         super().__init__(**kwargs)
         if self.objective is None:
@@ -293,7 +293,8 @@ class Person(Thing):
             "tense": self.tense,
             "opinions": self.opinions_list
         }
-        self.store()
+        if self.session is not None:
+            self.store()
 
     @property
     def opinions_iter(self):

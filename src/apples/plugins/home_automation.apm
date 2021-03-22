@@ -1,0 +1,31 @@
+{
+    "version": "0.1.0",
+    "format": "0.1.0",
+    "name": "home_automation",
+    "human-name": "Home Automation",
+    "description": "Open Assistant home automation base plugin.",
+    "service": "home_automation",
+    "update-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/home_automation.apm",
+    "requirements": [
+    ],
+    "load-directives": [
+        {
+            "directive": "load-after",
+            "module": "$core"
+        },
+        {
+            "directive": "load-after",
+            "module": "$actions"
+        }
+    ],
+    "files": [
+        {
+            "local-url": "plugins/home_automation.apm",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/home_automation.apm"
+        },
+        {
+            "local-url": "plugins/home_automation/__init__.py",
+            "remote-url": "https://raw.githubusercontent.com/The-Randalorian/Open-Assistant/apples-0.2/src/apples/plugins/home_automation/__init__.py"
+        }
+    ]
+}

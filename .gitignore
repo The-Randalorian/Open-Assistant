@@ -123,5 +123,5 @@ dmypy.json
 /src/apples/plugins/english_stt/model/
 /src/apples/plugins/english_stt/deepspeech-0.9.3-models/
 /src/apples/plugins/english_stt/lastRecord.wav
-/haYeelight/lights.json
-/sqlThingStorage/sql_urls.txt
+/src/apples/plugins/home_automation_yeelight/lights.json
+/src/apples/plugins/sql_thing_storage/sql_urls.txt

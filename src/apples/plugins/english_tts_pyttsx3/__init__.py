@@ -139,7 +139,6 @@ def terminal_set_speed(**kwargs):
 
 
 def get_voice_id_from_name(name: str):
-    name = name.strip('"')
     try:
         return voiceNames[name]
     except KeyError:
@@ -147,8 +146,8 @@ def get_voice_id_from_name(name: str):
 
 
 set_voice_parser = terminal.ArgumentParser(prog="tts.voice",
-                                            description="Change the voice of the TTS engine.",
-                                            exit_on_error=False)
+                                           description="Change the voice of the TTS engine.",
+                                           exit_on_error=False)
 set_voice_parser.add_argument("voice",
                               type=get_voice_id_from_name,
                               default=None,

@@ -6,5 +6,5 @@ librosa==0.5.1
 matplotlib==2.0.2
 numpy==1.14.3
 scipy==1.10.0
-tqdm==4.11.2
+tqdm==4.66.3
 Unidecode==0.4.20
